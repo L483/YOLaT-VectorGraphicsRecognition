@@ -273,16 +273,6 @@ class SVGGraphBuilderBezier2:
 
         return merged_graph_dict
 
-        '''
-        print(sim_pos * sim_att)
-        print(sim)
-
-        print(pos[0], 'query')
-        for i, s in enumerate(sim[0]):
-            if s:
-                print(graph_dict['pos']['spatial'][i], graph_dict['attr']['is_control'][i])
-        '''
-
     def buildPosEdge(self, pos, is_control, th=5e-3):
         distance = euclidean_distances(pos, pos)
         s = (distance < th)
@@ -710,16 +700,6 @@ class SVGGraphBuilderBezier:
                     merged_graph_dict[key][k] = merged_mat
 
         return merged_graph_dict
-
-        '''
-        print(sim_pos * sim_att)
-        print(sim)
-
-        print(pos[0], 'query')
-        for i, s in enumerate(sim[0]):
-            if s:
-                print(graph_dict['pos']['spatial'][i], graph_dict['attr']['is_control'][i])
-        '''
 
     def buildPosEdge(self, pos, is_control, th=5e-3):
         distance = euclidean_distances(pos, pos)

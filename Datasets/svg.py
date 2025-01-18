@@ -49,26 +49,6 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
             'window2': 15
         }
 
-        '''
-        self.class_dict = {
-            'armchair':0, 
-            'bed':1, 
-            'door1':2, 
-            'door2':2, 
-            'sink1':3, 
-            'sink2':3, 
-            'sink3':3, 
-            'sink4':3, 
-            'sofa1':4, 
-            'sofa2':4, 
-            'table1':5, 
-            'table2':5, 
-            'table3':5, 
-            'tub':6, 
-            'window1':7, 
-            'window2':7
-        }
-        '''
         # self.anchors = self.get_anchor()
         '''
         self.n_objects = 0

@@ -38,10 +38,6 @@ if __name__ == "__main__":
         from Datasets.svg2 import SESYDFloorPlan as CADDataset
     elif opt.graph == 'bezier_edge_attr':
         from Datasets.svg3 import SESYDFloorPlan as CADDataset
-    # elif opt.graph == 'bezier_cc':
-    #     from  Datasets.graph_dict import SESYDFloorPlan as CADDataset
-    # elif opt.graph == 'bezier_cc_bb':
-    #     from  Datasets.graph_dict2 import SESYDFloorPlan as CADDataset
 
     test_dataset = CADDataset(
         opt.data_dir, opt, partition=opt.phase, data_aug=False, do_mixup=False)
@@ -60,22 +56,6 @@ if __name__ == "__main__":
     opt.in_channels = test_dataset[0].x.shape[1]
 
     logging.info('===> Loading the network ...')
-    # if opt.arch == 'votenet':
-    #     from votenet import SparseCADGCN, DetectionLoss
-    # elif opt.arch == 'centernet':
-    #     from architecture import SparseCADGCN, DetectionLoss
-    # elif opt.arch == 'centernet2':
-    #     from architecture2 import SparseCADGCN, DetectionLoss
-    # elif opt.arch == 'centernet3cc':
-    #     from architecture3cc import SparseCADGCN, DetectionLoss
-    # elif opt.arch == 'two_stage':
-    #     from two_stage import SparseCADGCN, DetectionLoss
-    # elif opt.arch == 'two_stage2':
-    #     from two_stage2 import SparseCADGCN, DetectionLoss
-    # elif opt.arch == 'cluster':
-    #     from architecture_cluster import SparseCADGCN, DetectionLoss
-    # elif opt.arch == 'centernet3cc_rpn':
-    #     from architecture3cc_rpn import SparseCADGCN, DetectionLoss
 
     model = SparseCADGCN(opt).to(opt.device)
     # if opt.multi_gpus:

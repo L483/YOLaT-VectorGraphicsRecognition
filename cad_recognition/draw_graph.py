@@ -36,19 +36,3 @@ if __name__ == "__main__":
             label_slice = slices['gt_labels']
             edge_slice = slices['edges']
             raise SystemExit
-
-            # print(data.filepath, data.width, data.height)
-            # for i in range(0, len(image_slice) - 1):
-            #     start = image_slice[i]
-            #     end = image_slice[i + 1]
-            #     is_control_mask = ~data.is_control[start:end].squeeze()
-            #     pos_img = data.pos[start:end][is_control_mask].cuda()
-            #     edge = data.edge[start]
-
-            #     pos_img[:, 0] *= data.width[i]
-            #     pos_img[:, 1] *= data.height[i]
-
-            #     start = label_slice[i]
-            #     end = label_slice[i + 1]
-            #     gt_coord_img = data.gt_bbox[start:end]
-            #     gt_cls_img = data.gt_labels[start:end].unsqueeze(1)
