@@ -3,6 +3,7 @@ import tqdm
 import torch
 import numpy as np
 
+
 def ap_per_class(tp, conf, pred_cls, target_cls):
     """ Compute the average precision, given the recall and precision curves.
     Source: https://github.com/rafaelpadilla/Object-Detection-Metrics.
@@ -57,6 +58,7 @@ def ap_per_class(tp, conf, pred_cls, target_cls):
 
     return p, r, ap, f1, unique_classes.astype("int32")
 
+
 def compute_ap(recall, precision):
     """ Compute the average precision, given the recall and precision curves.
     Code originally from https://github.com/rbgirshick/py-faster-rcnn.
@@ -84,13 +86,14 @@ def compute_ap(recall, precision):
     ap = np.sum((mrec[i + 1] - mrec[i]) * mpre[i + 1])
     return ap
 
+
 def get_batch_statistics(outputs, targets, iou_threshold):
     """ Compute true positives, predicted scores and predicted labels per sample """
     batch_metrics = []
     for sample_i in range(len(outputs)):
         if outputs[sample_i] is None:
             continue
-        
+
         output = outputs[sample_i]
         pred_boxes = output[:, :4]
         pred_scores = output[:, 4]
@@ -108,31 +111,34 @@ def get_batch_statistics(outputs, targets, iou_threshold):
                 # If targets are found break
                 if len(detected_boxes) == len(annotations):
                     break
-            
+
                 # Ignore if label is not one of the target labels
                 if pred_label not in target_labels:
                     continue
 
-                #t_target_boxes = target_boxes[target_labels == pred_label, :]              
-                #iou, box_index = bbox_iou(pred_box.unsqueeze(0), t_target_boxes).max(0)
+                # t_target_boxes = target_boxes[target_labels == pred_label, :]
+                # iou, box_index = bbox_iou(pred_box.unsqueeze(0), t_target_boxes).max(0)
                 iou = bbox_iou(pred_box.unsqueeze(0), target_boxes)
-                
-                #iou2 = bbox_iou2(pred_box.unsqueeze(0), target_boxes)
 
-                mask_matched = (target_labels == pred_label) & (iou >= iou_threshold)
-                iou_matched = torch.where(mask_matched, iou, torch.zeros_like(iou))
+                # iou2 = bbox_iou2(pred_box.unsqueeze(0), target_boxes)
+
+                mask_matched = (target_labels == pred_label) & (
+                    iou >= iou_threshold)
+                iou_matched = torch.where(
+                    mask_matched, iou, torch.zeros_like(iou))
                 iou_max, box_index = iou_matched.max(0)
-                #iou, box_index = bbox_iou(pred_box.unsqueeze(0), target_boxes).max(0)
-                
+                # iou, box_index = bbox_iou(pred_box.unsqueeze(0), target_boxes).max(0)
+
                 if iou_max >= iou_threshold and box_index not in detected_boxes:
                     if np.isnan(pred_box[0].cpu().numpy()):
                         print(pred_box, iou, mask_matched, iou_matched)
                     true_positives[pred_i] = 1
                     detected_boxes += [box_index]
-        #print(true_positives)
-        
+        # print(true_positives)
+
         batch_metrics.append([true_positives, pred_scores, pred_labels])
     return batch_metrics
+
 
 def bbox_iou(box1, box2, x1y1x2y2=True):
     """
@@ -146,8 +152,10 @@ def bbox_iou(box1, box2, x1y1x2y2=True):
         b2_y1, b2_y2 = box2[:, 1] - box2[:, 3] / 2, box2[:, 1] + box2[:, 3] / 2
     else:
         # Get the coordinates of bounding boxes
-        b1_x1, b1_y1, b1_x2, b1_y2 = box1[:, 0], box1[:, 1], box1[:, 2], box1[:, 3]
-        b2_x1, b2_y1, b2_x2, b2_y2 = box2[:, 0], box2[:, 1], box2[:, 2], box2[:, 3]
+        b1_x1, b1_y1, b1_x2, b1_y2 = box1[:,
+                                          0], box1[:, 1], box1[:, 2], box1[:, 3]
+        b2_x1, b2_y1, b2_x2, b2_y2 = box2[:,
+                                          0], box2[:, 1], box2[:, 2], box2[:, 3]
 
     # get the corrdinates of the intersection rectangle
     inter_rect_x1 = torch.max(b1_x1, b2_x1)
@@ -166,6 +174,7 @@ def bbox_iou(box1, box2, x1y1x2y2=True):
 
     return iou
 
+
 def bbox_iou_ios_cpu(box1, box2, x1y1x2y2=True):
     """
     Returns the IoU of two bounding boxes
@@ -178,8 +187,10 @@ def bbox_iou_ios_cpu(box1, box2, x1y1x2y2=True):
         b2_y1, b2_y2 = box2[:, 1] - box2[:, 3] / 2, box2[:, 1] + box2[:, 3] / 2
     else:
         # Get the coordinates of bounding boxes
-        b1_x1, b1_y1, b1_x2, b1_y2 = box1[:, 0], box1[:, 1], box1[:, 2], box1[:, 3]
-        b2_x1, b2_y1, b2_x2, b2_y2 = box2[:, 0], box2[:, 1], box2[:, 2], box2[:, 3]
+        b1_x1, b1_y1, b1_x2, b1_y2 = box1[:,
+                                          0], box1[:, 1], box1[:, 2], box1[:, 3]
+        b2_x1, b2_y1, b2_x2, b2_y2 = box2[:,
+                                          0], box2[:, 1], box2[:, 2], box2[:, 3]
 
     # get the corrdinates of the intersection rectangle
     inter_rect_x1 = np.maximum(b1_x1, b2_x1)
@@ -198,6 +209,7 @@ def bbox_iou_ios_cpu(box1, box2, x1y1x2y2=True):
     ios = inter_area / b2_area
     return iou, ios
 
+
 def intersect_bb_idx(box1, box2, x1y1x2y2=True):
     if not x1y1x2y2:
         # Transform from center and width to exact coordinates
@@ -207,9 +219,11 @@ def intersect_bb_idx(box1, box2, x1y1x2y2=True):
         b2_y1, b2_y2 = box2[:, 1] - box2[:, 3] / 2, box2[:, 1] + box2[:, 3] / 2
     else:
         # Get the coordinates of bounding boxes
-        b1_x1, b1_y1, b1_x2, b1_y2 = box1[:, 0], box1[:, 1], box1[:, 2], box1[:, 3]
-        b2_x1, b2_y1, b2_x2, b2_y2 = box2[:, 0], box2[:, 1], box2[:, 2], box2[:, 3]
-    
+        b1_x1, b1_y1, b1_x2, b1_y2 = box1[:,
+                                          0], box1[:, 1], box1[:, 2], box1[:, 3]
+        b2_x1, b2_y1, b2_x2, b2_y2 = box2[:,
+                                          0], box2[:, 1], box2[:, 2], box2[:, 3]
+
     inter_rect_x1 = np.maximum(b1_x1, b2_x1)
     inter_rect_y1 = np.maximum(b1_y1, b2_y1)
     inter_rect_x2 = np.minimum(b1_x2, b2_x2)
@@ -218,7 +232,8 @@ def intersect_bb_idx(box1, box2, x1y1x2y2=True):
     mask = (inter_rect_x2 > inter_rect_x1) & (inter_rect_y2 > inter_rect_y1)
 
     return np.where(mask)[0]
-    
+
+
 def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.4):
     """
     Removes detections with lower object confidence score than 'conf_thres' and performs
@@ -227,7 +242,7 @@ def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.4):
         (x1, y1, x2, y2, object_conf, class_score, class_pred)
     """
     # From (center x, center y, width, height) to (x1, y1, x2, y2)
-    #prediction[..., :4] = xywh2xyxy(prediction[..., :4])
+    # prediction[..., :4] = xywh2xyxy(prediction[..., :4])
     output = [None for _ in range(len(prediction))]
     for image_i, image_pred in enumerate(prediction):
         # Filter out confidence scores below threshold
@@ -241,28 +256,31 @@ def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.4):
         # Sort by it
         image_pred = image_pred[(-score).argsort()]
         class_confs, class_preds = image_pred[:, 5:].max(1, keepdim=True)
-        detections = torch.cat((image_pred[:, :5], class_confs.float(), class_preds.float()), 1)
+        detections = torch.cat(
+            (image_pred[:, :5], class_confs.float(), class_preds.float()), 1)
         # Perform non-maximum suppression
         keep_boxes = []
         while detections.size(0):
-            large_overlap = bbox_iou(detections[0, :4].unsqueeze(0), detections[:, :4])
+            large_overlap = bbox_iou(
+                detections[0, :4].unsqueeze(0), detections[:, :4])
 
             large_overlap = large_overlap > nms_thres
             label_match = detections[0, -1] == detections[:, -1]
-            
+
             # Indices of boxes with lower confidence scores, large IOUs and matching labels
             invalid = large_overlap & label_match
             weights = detections[invalid, 4:5]
-            #print(weights, large_overlap, 'weights')
+            # print(weights, large_overlap, 'weights')
             # Merge overlapping bboxes by order of confidence
-            detections[0, :4] = (weights * detections[invalid, :4]).sum(0) / weights.sum()
-            #print('foo', detections[0, :4], weights.sum())
-            #_, idx = weights.squeeze().max(0)
-            #detections[0, :4] = (weights * detections[idx, :4]).sum(0) / weights.sum()
+            detections[0, :4] = (
+                weights * detections[invalid, :4]).sum(0) / weights.sum()
+            # print('foo', detections[0, :4], weights.sum())
+            # _, idx = weights.squeeze().max(0)
+            # detections[0, :4] = (weights * detections[idx, :4]).sum(0) / weights.sum()
 
             keep_boxes += [detections[0]]
             detections = detections[~invalid]
-        
+
         if keep_boxes:
             output[image_i] = torch.stack(keep_boxes)
         else:

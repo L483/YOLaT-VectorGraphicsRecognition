@@ -4,6 +4,8 @@ from torch.nn import Sequential as Seq, Linear as Lin
 ##############################
 #    Basic layers
 ##############################
+
+
 def act_layer(act_type, inplace=False, neg_slope=0.2, n_prelu=1):
     # activation layer
     act = act_type.lower()
@@ -17,6 +19,7 @@ def act_layer(act_type, inplace=False, neg_slope=0.2, n_prelu=1):
         raise NotImplementedError('activation layer [%s] is not found' % act)
     return layer
 
+
 def norm_layer(norm_type, nc):
     # normalization layer 1d
     norm = norm_type.lower()
@@ -27,8 +30,10 @@ def norm_layer(norm_type, nc):
     elif norm == 'instance':
         layer = nn.InstanceNorm1d(nc, affine=False)
     else:
-        raise NotImplementedError('normalization layer [%s] is not found' % norm)
+        raise NotImplementedError(
+            'normalization layer [%s] is not found' % norm)
     return layer
+
 
 class MultiSeq(Seq):
     def __init__(self, *args):
@@ -41,6 +46,7 @@ class MultiSeq(Seq):
             else:
                 inputs = module(inputs)
         return inputs
+
 
 class MLP(Seq):
     def __init__(self, channels, act='relu',

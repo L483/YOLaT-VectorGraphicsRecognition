@@ -10,6 +10,7 @@ import numpy as np
 import copy
 import os
 
+
 class SVGParser:
     def __init__(self, filepath):
         self.dom = parse(filepath)
@@ -19,7 +20,7 @@ class SVGParser:
 
     def _traverse_tree(self, root, ret_list, parent_attrs):
         parent_attrs = copy.copy(parent_attrs)
-        
+
         if root.attributes is not None:
             attrs = root.attributes.items()
             for att in attrs:
@@ -29,7 +30,7 @@ class SVGParser:
             if child.nodeType == Node.ELEMENT_NODE:
                 if child.nodeName in self.shapes:
                     attrs = child.attributes.items()
-                    #print(attrs, child.nodeType)
+                    # print(attrs, child.nodeType)
                     attr_dict = copy.copy(parent_attrs)
                     for att in attrs:
                         attr_dict[att[0]] = att[1]
@@ -41,7 +42,7 @@ class SVGParser:
             self._traverse_tree(child, ret_list, parent_attrs)
 
     def get_all_shape(self):
-        #obtain all shape
+        # obtain all shape
         ret_list = []
         self._traverse_tree(self.root, ret_list, {})
         return ret_list
@@ -52,48 +53,49 @@ class SVGParser:
         img_height = img_info.getAttribute('height')
         return float(img_width), float(img_height)
 
+
 def merge_close_points(points):
     sim = euclidean_distances(points, points)
     sim = (sim < 1e-4)
     merged = np.zeros(sim.shape[0], dtype=bool)
-    
+
     merged_points = []
     for i, s in enumerate(sim):
         candidates = points[(~merged) & s]
-        if len(candidates) == 0: continue
-        merged_points.append(np.mean(candidates, axis = 0))
+        if len(candidates) == 0:
+            continue
+        merged_points.append(np.mean(candidates, axis=0))
         merged[s] = True
 
     return np.array(merged_points)
 
+
 def split_circle(points, circles):
     circle_params = circles['param']
     if len(circle_params) == 0:
-        return {'start_end':[], 'param':[], 'idx':[]},  circles
+        return {'start_end': [], 'param': [], 'idx': []},  circles
     cxs = circle_params[:, 0]
     cys = circle_params[:, 1]
     rs = circle_params[:, 2]
-   
-    def point_on_circle(x, y, cx, cy, r, th = 15):
-        r2 = (x - cx) * (x - cx)  + (y - cy) * (y - cy)
-        return np.abs(r2 - r * r) < th * th #r * r * th * th
 
+    def point_on_circle(x, y, cx, cy, r, th=15):
+        r2 = (x - cx) * (x - cx) + (y - cy) * (y - cy)
+        return np.abs(r2 - r * r) < th * th  # r * r * th * th
 
-    arc = {'start_end':[], 'param':[], 'idx':[]}
+    arc = {'start_end': [], 'param': [], 'idx': []}
     un_splited_idx = []
     count = 0
     for circle_i, (cx, cy, r) in enumerate(zip(cxs, cys, rs)):
         on_curve = point_on_circle(points[:, 0], points[:, 1], cx, cy, r)
-        #print(cx, cy, r, np.sum(on_curve))
+        # print(cx, cy, r, np.sum(on_curve))
         split_points = points[on_curve]
-        if len(split_points) == 0: 
+        if len(split_points) == 0:
             un_splited_idx.append(circle_i)
             continue
-        #print(split_points.shape)
+        # print(split_points.shape)
         split_points = merge_close_points(split_points)
-        
 
-        def sort_points_by_angle(points, ascend = True):
+        def sort_points_by_angle(points, ascend=True):
             angle = np.arctan(points[:, 1] / points[:, 0])
             if ascend:
                 idx = np.argsort(angle)
@@ -103,13 +105,14 @@ def split_circle(points, circles):
 
         if len(split_points) == 1:
             relative_pos = split_points - [cx, cy]
-            #relative_pos = np.concatenate([relative_pos, -relative_pos])
-            split_points = np.concatenate([split_points, [cx, cy] - relative_pos])
+            # relative_pos = np.concatenate([relative_pos, -relative_pos])
+            split_points = np.concatenate(
+                [split_points, [cx, cy] - relative_pos])
 
-        #print('relative_pos', relative_pos)
+        # print('relative_pos', relative_pos)
         relative_pos = split_points - [cx, cy] + 1e-7
-        
-        #1st 4th Quadrant
+
+        # 1st 4th Quadrant
         mask = (relative_pos[:, 0] > 0) & (relative_pos[:, 1] > 0)
         mask |= ((relative_pos[:, 0] > 0) & (relative_pos[:, 1] < 0))
         pos_4th_1st = relative_pos[mask]
@@ -118,20 +121,20 @@ def split_circle(points, circles):
             pos_4th_1st = split_points[mask][idx]
         else:
             pos_4th_1st = np.zeros((0, 2))
-        
-        #print('1st/4th quadrant', pos_4th_1st - [cx, cy])
 
-        #2nd Quadrant
+        # print('1st/4th quadrant', pos_4th_1st - [cx, cy])
+
+        # 2nd Quadrant
         mask = (relative_pos[:, 0] < 0) & (relative_pos[:, 1] > 0)
         pos_2nd = relative_pos[mask]
-        if len(pos_2nd) !=0:
+        if len(pos_2nd) != 0:
             idx = sort_points_by_angle(pos_2nd)
             pos_2nd = split_points[mask][idx]
         else:
             pos_2nd = np.zeros((0, 2))
-        #print('2nd quadrant', pos_2nd - [cx, cy])
+        # print('2nd quadrant', pos_2nd - [cx, cy])
 
-        #3rd Quadrant
+        # 3rd Quadrant
         mask = (relative_pos[:, 0] < 0) & (relative_pos[:, 1] < 0)
         pos_3rd = relative_pos[mask]
         if len(pos_3rd) != 0:
@@ -139,13 +142,10 @@ def split_circle(points, circles):
             pos_3rd = split_points[mask][idx]
         else:
             pos_3rd = np.zeros((0, 2))
-        #print('3rd quadrant', pos_3rd - [cx, cy])
+        # print('3rd quadrant', pos_3rd - [cx, cy])
 
-        
-        
-        sorted_pos = np.concatenate([pos_4th_1st, pos_2nd, pos_3rd], axis = 0)
-        #print('sorted', sorted_pos ,sorted_pos - [cx, cy])
-            
+        sorted_pos = np.concatenate([pos_4th_1st, pos_2nd, pos_3rd], axis=0)
+        # print('sorted', sorted_pos ,sorted_pos - [cx, cy])
 
         def build_arc(start, end, cx, cy, r):
             x0 = start[0]
@@ -156,22 +156,23 @@ def split_circle(points, circles):
             ry = r
             rot = 0
             o = [cx, cy]
-            
+
             start_vector = start - o
             end_vector = end - o
-            
-            a = start_vector[1] / (start_vector[0] + 1e-7) #slope of the line cross starting point
-            if start_vector[0] > 0: #1st/4th quadrant
-                if end_vector[1] > a * end_vector[0]: #arc blow the line
+
+            # slope of the line cross starting point
+            a = start_vector[1] / (start_vector[0] + 1e-7)
+            if start_vector[0] > 0:  # 1st/4th quadrant
+                if end_vector[1] > a * end_vector[0]:  # arc blow the line
                     large_arc = 0
-                else: #arc above the line
+                else:  # arc above the line
                     large_arc = 1
             else:
                 if end_vector[1] > a * end_vector[0]:
                     large_arc = 1
-                else:  
+                else:
                     large_arc = 0
-            #print(start, end, start_vector, end_vector, a, a * end_vector[0], large_arc, 'foooo')
+            # print(start, end, start_vector, end_vector, a, a * end_vector[0], large_arc, 'foooo')
             sweep = 1
             start_end = [x0, y0, x1, y1]
             param = [rx, ry, rot, large_arc, sweep]
@@ -180,24 +181,23 @@ def split_circle(points, circles):
         for i in range(0, len(sorted_pos) - 1):
             start = sorted_pos[i]
             end = sorted_pos[i + 1]
-            
+
             start_end, param = build_arc(start, end, cx, cy, r)
             arc['start_end'].append(start_end)
             arc['param'].append(param)
-            #arc['idx'].append(count)
+            # arc['idx'].append(count)
             count += 1
 
         start_end, param = build_arc(sorted_pos[-1], sorted_pos[0], cx, cy, r)
         arc['start_end'].append(start_end)
         arc['param'].append(param)
-        #arc['idx'].append(count)
+        # arc['idx'].append(count)
         count += 1
-        
-    circles = {'param':circles['param'][un_splited_idx]}
+
+    circles = {'param': circles['param'][un_splited_idx]}
     for key in arc:
         arc[key] = np.array(arc[key])
-    
-        
+
     if False:
         paths = []
         for start_end, param in zip(arc['start_end'], arc['param']):
@@ -212,11 +212,11 @@ def split_circle(points, circles):
             path.append(Arc(start, radius, rotation, large_arc, sweep, end))
             paths.append(path)
         print(paths)
-        wsvg(paths, filename = 'debug.svg')
+        wsvg(paths, filename='debug.svg')
 
-    
     return arc, circles
-        
+
+
 '''
 def split_arc(points, arcs):
     for arc_i in range(len(arc['start_end'])):
@@ -232,33 +232,39 @@ def split_arc(points, arcs):
         on_curve = point_on_arc(points[:, 0], points[:, 1], a_x0, a_y0, a_x1, a_y1, rx, ry, large_arc, sweep)
 '''
 
+
 def split_line(points, lines):
-    def point_on_line(x, y, x0, y0, x1, y1, th = 3): 
+    def point_on_line(x, y, x0, y0, x1, y1, th=3):
         min_x = min(x0, x1)
         max_x = max(x0, x1)
         min_y = min(y0, y1)
         max_y = max(y0, y1)
-        out_rect = (x - min_x < -1) | (x - max_x > 1) | (y - min_y < -1) | (y - max_y > 1)
-        is_start_end = (x - min_x <= 1) & (x - min_x >= -1) & (y - min_y <= 1) & (y - min_y >= -1)
-        is_start_end |= (x - max_x <= 1) & (x - max_x >= -1) & (y - max_y <= 1) & (y - max_y >= -1)
+        out_rect = (x - min_x < -1) | (x - max_x >
+                                       1) | (y - min_y < -1) | (y - max_y > 1)
+        is_start_end = (x - min_x <= 1) & (x - min_x >= -
+                                           1) & (y - min_y <= 1) & (y - min_y >= -1)
+        is_start_end |= (x - max_x <= 1) & (x - max_x >= -
+                                            1) & (y - max_y <= 1) & (y - max_y >= -1)
         valid = ~is_start_end
 
         if x1 - x0 != 0:
             a = (y1 - y0) / (x1 - x0)
             b = y0 - a * x0
-            
+
             d_p2l_2 = (a * x - y + b) * (a * x - y + b) / (a * a + 1)
             x_proj = (a * (y - b) + x) / (a * a + 1)
             y_proj = a * x_proj + b
-            
+
         else:
             d_p2l_2 = (x - x0) * (x - x0)
             x_proj = x0
             y_proj = y
 
-        close_to_line = d_p2l_2 < th * th #((y1 - y0) * (y1 - y0) + (x1 - x0) * (x1 - x0)) * th * th
-        within_start_end = (x_proj >= min_x) & (x_proj <= max_x) & (y_proj >= min_y) & (y_proj <= max_y)
-        
+        # ((y1 - y0) * (y1 - y0) + (x1 - x0) * (x1 - x0)) * th * th
+        close_to_line = d_p2l_2 < th * th
+        within_start_end = (x_proj >= min_x) & (
+            x_proj <= max_x) & (y_proj >= min_y) & (y_proj <= max_y)
+
         '''
         if min_x == 258.979986 and min_y == 405.309139:
             print(close_to_line)
@@ -269,27 +275,28 @@ def split_line(points, lines):
             print((valid & close_to_line & within_start_end)[31], points[31], [x0, y0, x1, y1])
             raise SystemExit
         '''
-        
+
         return valid & close_to_line & within_start_end
 
-    new_lines = {'start_end':[]}
+    new_lines = {'start_end': []}
     for line_i in range(len(lines['start_end'])):
         line_x0 = lines['start_end'][line_i, 0]
         line_y0 = lines['start_end'][line_i, 1]
         line_x1 = lines['start_end'][line_i, 2]
         line_y1 = lines['start_end'][line_i, 3]
-        
 
-        on_curve = point_on_line(points[:, 0], points[:, 1], line_x0, line_y0, line_x1, line_y1)
+        on_curve = point_on_line(
+            points[:, 0], points[:, 1], line_x0, line_y0, line_x1, line_y1)
 
         split_points = points[on_curve]
 
-        if len(split_points) == 0: 
+        if len(split_points) == 0:
             new_lines['start_end'].append(lines['start_end'][line_i])
             continue
-        #print(split_points.shape)
+        # print(split_points.shape)
         split_points = merge_close_points(split_points)
-        split_points = np.concatenate([np.array([line_x0, line_y0])[None, :], split_points, np.array([line_x1, line_y1])[None, :]])
+        split_points = np.concatenate([np.array([line_x0, line_y0])[
+                                      None, :], split_points, np.array([line_x1, line_y1])[None, :]])
 
         if line_x1 == line_x0:
             idx = np.argsort(split_points[:, 1])
@@ -308,23 +315,23 @@ def split_line(points, lines):
             print(split_points)
             raise SystemExit
         '''
-        
 
-        #print(split_points)
+        # print(split_points)
         for i in range(len(split_points) - 1):
             start = split_points[i]
             end = split_points[i + 1]
             new_lines['start_end'].append(np.concatenate([start, end]))
-        #print(new_lines)
+        # print(new_lines)
     return new_lines
 
+
 def split_cross(shape_list):
-    #print(shape_list)
+    # print(shape_list)
     start_end = []
-    type_dict = {'line':{'start_end':[]}, #, 'idx':[]},
-        'circle':{'param':[]}, #, 'idx':[]}, 
-        'arc':{'start_end':[], 'param':[]} #, 'idx':[]}
-    }
+    type_dict = {'line': {'start_end': []},  # , 'idx':[]},
+                 'circle': {'param': []},  # , 'idx':[]},
+                 'arc': {'start_end': [], 'param': []}  # , 'idx':[]}
+                 }
 
     for i, shape in enumerate(shape_list):
         if shape['shape_name'] == 'line':
@@ -334,17 +341,17 @@ def split_cross(shape_list):
             y1 = float(shape['y2'])
 
             type_dict['line']['start_end'].append([x0, y0, x1, y1])
-            #type_dict['line']['idx'].append(i)
+            # type_dict['line']['idx'].append(i)
         elif shape['shape_name'] == 'circle':
             cx = float(shape['cx'])
             cy = float(shape['cy'])
             r = float(shape['r'])
             type_dict['circle']['param'].append([cx, cy, r])
-            #type_dict['circle']['idx'].append(i)
+            # type_dict['circle']['idx'].append(i)
         elif shape['shape_name'] == 'path':
             cmd = shape['d']
             path = parse_path(cmd)
-            if len(path)> 1:
+            if len(path) > 1:
                 print('Error: Un-implemented path length')
             arc = path[0]
             if not isinstance(arc, Arc):
@@ -360,31 +367,34 @@ def split_cross(shape_list):
             sweep = arc.sweep
             type_dict['arc']['start_end'].append([x0, y0, x1, y1])
             type_dict['arc']['param'].append([rx, ry, rot, large_arc, sweep])
-            #type_dict['arc']['idx'].append(i)
-            
+            # type_dict['arc']['idx'].append(i)
+
         else:
             print('Error: Un-implemented shape', shape)
             raise SystemExit
-    
+
     for shape_type in type_dict:
         for key in type_dict[shape_type]:
             type_dict[shape_type][key] = np.array(type_dict[shape_type][key])
 
-    
-    arc, unsplited_circle = split_circle(type_dict['line']['start_end'].reshape((-1, 2)), type_dict['circle'])
-    #split_arc(type_dict['line']['start_end'].reshape((-1, 2)), type_dict['arc'])
-    type_dict['line'] = split_line(type_dict['line']['start_end'].reshape((-1, 2)), type_dict['line'])
-    
+    arc, unsplited_circle = split_circle(
+        type_dict['line']['start_end'].reshape((-1, 2)), type_dict['circle'])
+    # split_arc(type_dict['line']['start_end'].reshape((-1, 2)), type_dict['arc'])
+    type_dict['line'] = split_line(
+        type_dict['line']['start_end'].reshape((-1, 2)), type_dict['line'])
+
     type_dict['circle'] = unsplited_circle
     for key in type_dict['arc']:
-        if len(arc[key]) == 0: continue
+        if len(arc[key]) == 0:
+            continue
         if len(type_dict['arc'][key]) == 0:
             type_dict['arc'][key] = arc[key]
         else:
-            type_dict['arc'][key] = np.concatenate([type_dict['arc'][key], arc[key]], axis = 0)      
-        
-            
+            type_dict['arc'][key] = np.concatenate(
+                [type_dict['arc'][key], arc[key]], axis=0)
+
     return type_dict
+
 
 if __name__ == '__main__':
     input_dir = '/data/xinyangjiang/Datasets/SESYD/diagram2'
@@ -395,8 +405,9 @@ if __name__ == '__main__':
             continue
         svg_list = os.listdir(os.path.join(input_dir, dir_name))
         for svg_name in svg_list:
-            #if dir_name != 'floorplans16-06' or svg_name != 'file_13.svg':continue
-            if '.svg' not in svg_name: continue
+            # if dir_name != 'floorplans16-06' or svg_name != 'file_13.svg':continue
+            if '.svg' not in svg_name:
+                continue
             print(os.path.join(dir_name, svg_name))
             p = SVGParser(os.path.join(input_dir, dir_name, svg_name))
             type_dict = split_cross(p.get_all_shape())
@@ -404,12 +415,11 @@ if __name__ == '__main__':
             paths = []
             for start_end in type_dict['line']['start_end']:
                 path = Path(Line(
-                    start = complex(start_end[0], start_end[1]), 
-                    end = complex(start_end[2], start_end[3]), 
+                    start=complex(start_end[0], start_end[1]),
+                    end=complex(start_end[2], start_end[3]),
                 ))
                 paths.append(path)
-            
-            
+
             for start_end, param in zip(type_dict['arc']['start_end'], type_dict['arc']['param']):
                 start = complex(start_end[0], start_end[1])
                 radius = complex(param[0], param[1])
@@ -417,9 +427,10 @@ if __name__ == '__main__':
                 large_arc = param[3]
                 sweep = param[4]
                 end = complex(start_end[2], start_end[3])
-                path = Path(Arc(start, radius, rotation, large_arc, sweep, end))
+                path = Path(
+                    Arc(start, radius, rotation, large_arc, sweep, end))
                 paths.append(path)
-            
+
             for param in type_dict['circle']['param']:
                 cx, cy, r = param
                 start = complex(cx - r, cy)
@@ -431,7 +442,7 @@ if __name__ == '__main__':
                 paths.append(path)
                 path = Path(Arc(start, radius, rotation, 0, 1, end))
                 paths.append(path)
-            
+
             if not os.path.isdir(os.path.join(output_dir, dir_name)):
                 os.mkdir(os.path.join(output_dir, dir_name))
-            wsvg(paths, filename = os.path.join(output_dir, dir_name, svg_name))
+            wsvg(paths, filename=os.path.join(output_dir, dir_name, svg_name))

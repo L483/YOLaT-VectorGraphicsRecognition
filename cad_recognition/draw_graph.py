@@ -14,24 +14,23 @@ import torch_geometric.transforms as T
 from torch_geometric.data import InMemoryDataset
 
 
-
-
 import logging
 
 if __name__ == "__main__":
     opt = OptInit().get_args()
     logging.info('===> Creating dataloader ...')
-    
-    test_dataset = SESYDFloorPlan(opt.data_dir, pre_transform=T.NormalizeScale(), partition = 'train')
-    test_loader = DataLoader(test_dataset, 
-        batch_size=opt.batch_size, 
-        shuffle=False, 
-        num_workers=8, 
-        collate_fn = InMemoryDataset.collate)   
+
+    test_dataset = SESYDFloorPlan(
+        opt.data_dir, pre_transform=T.NormalizeScale(), partition='train')
+    test_loader = DataLoader(test_dataset,
+                             batch_size=opt.batch_size,
+                             shuffle=False,
+                             num_workers=8,
+                             collate_fn=InMemoryDataset.collate)
 
     with torch.no_grad():
         for i_batch, (data, slices) in enumerate(test_loader):
-                
+
             print(slices)
             image_slice = slices['x']
             label_slice = slices['gt_labels']
@@ -45,16 +44,11 @@ if __name__ == "__main__":
             #     is_control_mask = ~data.is_control[start:end].squeeze()
             #     pos_img = data.pos[start:end][is_control_mask].cuda()
             #     edge = data.edge[start]
-                    
+
             #     pos_img[:, 0] *= data.width[i]
             #     pos_img[:, 1] *= data.height[i]
-
-
 
             #     start = label_slice[i]
             #     end = label_slice[i + 1]
             #     gt_coord_img = data.gt_bbox[start:end]
             #     gt_cls_img = data.gt_labels[start:end].unsqueeze(1)
-
-
-                    

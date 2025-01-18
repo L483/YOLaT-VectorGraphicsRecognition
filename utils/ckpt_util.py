@@ -5,7 +5,9 @@ from collections import OrderedDict
 import logging
 import numpy as np
 
-def load_pretrained_models(model, pretrained_model, phase, ismax=True):  # ismax means max best
+
+# ismax means max best
+def load_pretrained_models(model, pretrained_model, phase, ismax=True):
     if ismax:
         best_value = -np.inf
     else:
@@ -14,7 +16,8 @@ def load_pretrained_models(model, pretrained_model, phase, ismax=True):  # ismax
 
     if pretrained_model:
         if os.path.isfile(pretrained_model):
-            logging.info("===> Loading checkpoint '{}'".format(pretrained_model))
+            logging.info(
+                "===> Loading checkpoint '{}'".format(pretrained_model))
             checkpoint = torch.load(pretrained_model)
             try:
                 best_value = checkpoint['best_value']
@@ -30,8 +33,10 @@ def load_pretrained_models(model, pretrained_model, phase, ismax=True):  # ismax
             ckpt_model_state_dict = checkpoint['state_dict']
 
             # rename ckpt (avoid name is not same because of multi-gpus)
-            is_model_multi_gpus = True if list(model_dict)[0][0][0] == 'm' else False
-            is_ckpt_multi_gpus = True if list(ckpt_model_state_dict)[0][0] == 'm' else False
+            is_model_multi_gpus = True if list(
+                model_dict)[0][0][0] == 'm' else False
+            is_ckpt_multi_gpus = True if list(ckpt_model_state_dict)[
+                0][0] == 'm' else False
 
             if not (is_model_multi_gpus == is_ckpt_multi_gpus):
                 temp_dict = OrderedDict()
@@ -51,17 +56,20 @@ def load_pretrained_models(model, pretrained_model, phase, ismax=True):  # ismax
                 logging.info("The pretrained_model is at checkpoint {}. \t "
                              "Best value: {}".format(checkpoint['epoch'], best_value))
             else:
-                logging.info("The pretrained_model is at checkpoint {}.".format(checkpoint['epoch']))
+                logging.info("The pretrained_model is at checkpoint {}.".format(
+                    checkpoint['epoch']))
 
             if phase == 'train':
                 epoch = checkpoint['epoch']
             else:
                 epoch = -1
         else:
-            raise ImportError("===> No checkpoint found at '{}'".format(pretrained_model))
+            raise ImportError(
+                "===> No checkpoint found at '{}'".format(pretrained_model))
     else:
         logging.info('===> No pre-trained model')
     return model, best_value, epoch
+
 
 def load_pretrained_optimizer(pretrained_model, optimizer, scheduler, lr, use_ckpt_lr=True):
     if pretrained_model:
@@ -82,6 +90,7 @@ def load_pretrained_optimizer(pretrained_model, optimizer, scheduler, lr, use_ck
                         lr = lr
 
     return optimizer, scheduler, lr
+
 
 def save_checkpoint(state, is_best, save_path, postname):
     filename = '{}/{}_{}.pth'.format(save_path, postname, int(state['epoch']))
