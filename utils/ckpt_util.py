@@ -5,25 +5,6 @@ from collections import OrderedDict
 import logging
 import numpy as np
 
-
-def save_ckpt(model, optimizer, loss, epoch, save_path, name_pre, name_post='best'):
-    model_cpu = {k: v.cpu() for k, v in model.state_dict().items()}
-    state = {
-            'epoch': epoch,
-            'model_state_dict': model_cpu,
-            'optimizer_state_dict': optimizer.state_dict(),
-            'loss': loss
-        }
-
-    if not os.path.exists(save_path):
-        os.mkdir(save_path)
-        print("Directory ", save_path, " is created.")
-
-    filename = '{}/{}_{}.pth'.format(save_path, name_pre, name_post)
-    torch.save(state, filename)
-    print('model has been saved as {}'.format(filename))
-
-
 def load_pretrained_models(model, pretrained_model, phase, ismax=True):  # ismax means max best
     if ismax:
         best_value = -np.inf
@@ -82,7 +63,6 @@ def load_pretrained_models(model, pretrained_model, phase, ismax=True):  # ismax
         logging.info('===> No pre-trained model')
     return model, best_value, epoch
 
-
 def load_pretrained_optimizer(pretrained_model, optimizer, scheduler, lr, use_ckpt_lr=True):
     if pretrained_model:
         if os.path.isfile(pretrained_model):
@@ -103,28 +83,8 @@ def load_pretrained_optimizer(pretrained_model, optimizer, scheduler, lr, use_ck
 
     return optimizer, scheduler, lr
 
-
 def save_checkpoint(state, is_best, save_path, postname):
     filename = '{}/{}_{}.pth'.format(save_path, postname, int(state['epoch']))
     torch.save(state, filename)
     if is_best:
         shutil.copyfile(filename, '{}/{}_best.pth'.format(save_path, postname))
-
-
-def change_ckpt_dict(model, optimizer, scheduler, opt):
-
-    for _ in range(opt.epoch):
-        scheduler.step()
-    is_best = (opt.test_value < opt.best_value)
-    opt.best_value = min(opt.test_value, opt.best_value)
-
-    model_cpu = {k: v.cpu() for k, v in model.state_dict().items()}
-    # optim_cpu = {k: v.cpu() for k, v in optimizer.state_dict().items()}
-    save_checkpoint({
-        'epoch': opt.epoch,
-        'state_dict': model_cpu,
-        'optimizer_state_dict': optimizer.state_dict(),
-        'scheduler_state_dict': scheduler.state_dict(),
-        'best_value': opt.best_value,
-    }, is_best, opt.save_path, opt.post)
-

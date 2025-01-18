@@ -3,14 +3,11 @@
 
 import torch
 from torch.nn import Linear as Lin
-import torch_geometric as tg
-from gcn_lib.sparse import MultiSeq, MLP, GraphConv, PlainDynBlock, ResBlock, DenseDynBlock, DilatedKnnGraph
+from gcn_lib.sparse import MultiSeq, MLP, GraphConv, ResBlock
 from torch_scatter import scatter
 from torch_geometric.data import Data
 import numpy as np
 import time
-from thop import profile
-from fvcore.nn import FlopCountAnalysis
 
 class Backbone(torch.nn.Module):
     def __init__(self, opt, n_edges = 3, edge_max_pool = torch.nn.AdaptiveAvgPool1d):

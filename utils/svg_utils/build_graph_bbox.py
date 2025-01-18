@@ -9,8 +9,7 @@ import numpy as np
 import pickle
 import math
 
-from svgpathtools import parse_path, wsvg
-from svgpathtools import Path, Line, QuadraticBezier, CubicBezier, Arc
+from svgpathtools import Path, Line, Arc
 
 from Datasets.svg_parser import SVGGraphBuilderBezier2 as SVGGraphBuilderBezier
 from Datasets.svg_parser import SVGParser
@@ -212,93 +211,6 @@ def mergeCC(node_dict):
     
     return np.array(shape_shape_edges), np.array(cross_shape_edges), np.array(shape_shape_edge_attr), np.array(cross_shape_edge_attr), paths, new_cc
 
-def getSuperNode(node_dict):
-    edges = node_dict['edge']['shape']
-    pos = node_dict['pos']['spatial']
-    color = node_dict['attr']['color']
-    is_control = node_dict['attr']['is_control']
-
-    cc = getConnnectedComponent(node_dict)
-    
-    paths = []
-    bboxs = []
-    
-    shape_shape_edges = []
-    super_shape_edges = []
-    super_pos = np.zeros((len(cc), 2))
-    super_color = np.zeros((len(cc), 3))
-    offset = pos.shape[0]
-
-    for i, cluster in enumerate(cc):
-        pos_cluster = pos[cluster]
-        #print(pos_cluster.shape)
-        max_x = pos_cluster[:, 0].max(0)
-        min_x = pos_cluster[:, 0].min(0)
-        max_y = pos_cluster[:, 1].max(0)
-        min_y = pos_cluster[:, 1].min(0)
-        #print(min_x, min_y, max_x, max_y)
-        bboxs.append((min_x, min_y, max_x, max_y))
-
-        super_pos[i] = np.mean(pos_cluster, axis = 0)
-        super_color[i] = np.mean(color[cluster], axis = 0)
-        for ii, idx in enumerate(cluster):
-            super_shape_edges.append((offset + i, idx))
-            for idx_j in cluster[ii + 1, :]:
-                if idx == idx_j: continue
-                shape_shape_edges.append((idx, idx_j))
-
-        if True:
-            real_max_x = pos_cluster[:, 0].max(0) * width
-            real_min_x = pos_cluster[:, 0].min(0) * width
-            real_max_y = pos_cluster[:, 1].max(0) * height
-            real_min_y = pos_cluster[:, 1].min(0) * height
-            
-            p0 = complex(real_min_x, real_min_y)
-            p1 = complex(real_max_x, real_min_y)
-            p2 = complex(real_max_x, real_max_y)
-            p3 = complex(real_min_x, real_max_y)
-            paths.append(Path(Line(p0, p1), 
-                Line(p1, p2), 
-                Line(p2, p3), 
-                Line(p3, p0)
-            ))
-
-    super_super_edges = []
-    same_cc = np.zeros((len(bboxs), len(bboxs))).astype(np.bool)
-    for i, parent_bb in enumerate(bboxs):
-        for j, child_bb in enumerate(bboxs):
-            if i == j: continue
-            inter_rect_x1 = max(parent_bb[0], child_bb[0])
-            inter_rect_y1 = max(parent_bb[1], child_bb[1])
-            inter_rect_x2 = min(parent_bb[2], child_bb[2])
-            inter_rect_y2 = min(parent_bb[3], child_bb[3])
-
-            child_area = (child_bb[2] - child_bb[0]) * (child_bb[3] - child_bb[1])
-            is_parent_child = False
-            
-            if child_area > 0:
-                inter_area = max(inter_rect_x2 - inter_rect_x1, 0) * max(inter_rect_y2 - inter_rect_y1, 0)
-                if inter_area * 1.0 / child_area > 0.9:
-                    is_parent_child = True
-            else:
-                if child_bb[2] - child_bb[0] == 0:
-                    if inter_rect_x2 - inter_rect_x1 == 0 and max(inter_rect_y2 - inter_rect_y1, 0) > 0.9 * (child_bb[3] - child_bb[1]):
-                        is_parent_child = True
-                if child_bb[3] - child_bb[1] == 0:
-                    if  max(inter_rect_x2 - inter_rect_x1, 0) > 0.9 * (child_bb[2] - child_bb[0]) and inter_rect_y2 - inter_rect_y1 == 0:
-                        is_parent_child = True
-
-            if is_parent_child:
-                same_cc[i, j] = True
-                same_cc[j, i] = True
-                #super_super_edges.append((offset + i, offset + j))
-                #print(parent_bb[0] * width, parent_bb[1] * height, parent_bb[2] * width, parent_bb[3] * height)
-                #print(child_bb[0] * width, child_bb[1] * height, child_bb[2] * width, child_bb[3] * height)
-                #print('_______________________________________')
-        
-    return super_pos, super_color, np.array(shape_shape_edges), np.array(super_shape_edges), np.array(super_super_edges), paths
-
-
 if __name__ == '__main__':
     graph_builder = SVGGraphBuilderBezier()
     input_dir = 'data/FloorPlansGraph5_iter/'
@@ -379,3 +291,89 @@ if __name__ == '__main__':
     }
     pickle.dump(stats, open(os.path.join(output_dir, 'stats.pkl'), 'wb'))
     print(stats)
+
+# def getSuperNode(node_dict):
+#     edges = node_dict['edge']['shape']
+#     pos = node_dict['pos']['spatial']
+#     color = node_dict['attr']['color']
+#     is_control = node_dict['attr']['is_control']
+
+#     cc = getConnnectedComponent(node_dict)
+    
+#     paths = []
+#     bboxs = []
+    
+#     shape_shape_edges = []
+#     super_shape_edges = []
+#     super_pos = np.zeros((len(cc), 2))
+#     super_color = np.zeros((len(cc), 3))
+#     offset = pos.shape[0]
+
+#     for i, cluster in enumerate(cc):
+#         pos_cluster = pos[cluster]
+#         #print(pos_cluster.shape)
+#         max_x = pos_cluster[:, 0].max(0)
+#         min_x = pos_cluster[:, 0].min(0)
+#         max_y = pos_cluster[:, 1].max(0)
+#         min_y = pos_cluster[:, 1].min(0)
+#         #print(min_x, min_y, max_x, max_y)
+#         bboxs.append((min_x, min_y, max_x, max_y))
+
+#         super_pos[i] = np.mean(pos_cluster, axis = 0)
+#         super_color[i] = np.mean(color[cluster], axis = 0)
+#         for ii, idx in enumerate(cluster):
+#             super_shape_edges.append((offset + i, idx))
+#             for idx_j in cluster[ii + 1, :]:
+#                 if idx == idx_j: continue
+#                 shape_shape_edges.append((idx, idx_j))
+
+#         if True:
+#             real_max_x = pos_cluster[:, 0].max(0) * width
+#             real_min_x = pos_cluster[:, 0].min(0) * width
+#             real_max_y = pos_cluster[:, 1].max(0) * height
+#             real_min_y = pos_cluster[:, 1].min(0) * height
+            
+#             p0 = complex(real_min_x, real_min_y)
+#             p1 = complex(real_max_x, real_min_y)
+#             p2 = complex(real_max_x, real_max_y)
+#             p3 = complex(real_min_x, real_max_y)
+#             paths.append(Path(Line(p0, p1), 
+#                 Line(p1, p2), 
+#                 Line(p2, p3), 
+#                 Line(p3, p0)
+#             ))
+
+#     super_super_edges = []
+#     same_cc = np.zeros((len(bboxs), len(bboxs))).astype(np.bool)
+#     for i, parent_bb in enumerate(bboxs):
+#         for j, child_bb in enumerate(bboxs):
+#             if i == j: continue
+#             inter_rect_x1 = max(parent_bb[0], child_bb[0])
+#             inter_rect_y1 = max(parent_bb[1], child_bb[1])
+#             inter_rect_x2 = min(parent_bb[2], child_bb[2])
+#             inter_rect_y2 = min(parent_bb[3], child_bb[3])
+
+#             child_area = (child_bb[2] - child_bb[0]) * (child_bb[3] - child_bb[1])
+#             is_parent_child = False
+            
+#             if child_area > 0:
+#                 inter_area = max(inter_rect_x2 - inter_rect_x1, 0) * max(inter_rect_y2 - inter_rect_y1, 0)
+#                 if inter_area * 1.0 / child_area > 0.9:
+#                     is_parent_child = True
+#             else:
+#                 if child_bb[2] - child_bb[0] == 0:
+#                     if inter_rect_x2 - inter_rect_x1 == 0 and max(inter_rect_y2 - inter_rect_y1, 0) > 0.9 * (child_bb[3] - child_bb[1]):
+#                         is_parent_child = True
+#                 if child_bb[3] - child_bb[1] == 0:
+#                     if  max(inter_rect_x2 - inter_rect_x1, 0) > 0.9 * (child_bb[2] - child_bb[0]) and inter_rect_y2 - inter_rect_y1 == 0:
+#                         is_parent_child = True
+
+#             if is_parent_child:
+#                 same_cc[i, j] = True
+#                 same_cc[j, i] = True
+#                 #super_super_edges.append((offset + i, offset + j))
+#                 #print(parent_bb[0] * width, parent_bb[1] * height, parent_bb[2] * width, parent_bb[3] * height)
+#                 #print(child_bb[0] * width, child_bb[1] * height, child_bb[2] * width, child_bb[3] * height)
+#                 #print('_______________________________________')
+        
+#     return super_pos, super_color, np.array(shape_shape_edges), np.array(super_shape_edges), np.array(super_super_edges), paths

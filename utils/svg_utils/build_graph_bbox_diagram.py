@@ -4,12 +4,8 @@ sys.path.insert(0, os.path.join(os.path.dirname(os.path.abspath(__file__)), '../
 import numpy as np
 import pickle
 import math
-from PIL import Image
-from matplotlib import pyplot as plt
-import matplotlib.patches as patches
 
-from svgpathtools import parse_path, wsvg
-from svgpathtools import Path, Line, QuadraticBezier, CubicBezier, Arc
+from svgpathtools import Path, Line, Arc
 
 from Datasets.svg_parser import SVGGraphBuilderBezier2 as SVGGraphBuilderBezier
 from Datasets.svg_parser import SVGParser
@@ -79,41 +75,12 @@ def getConnnectedComponent(node_dict):
 
     return clusters    
 
-def draw_cluster_graph(svg_path, save_path, width, height, bboxs, pos, is_control, edges):
-    tiff_path = svg_path.replace('.svg', '.tiff') 
-    img = np.array(Image.open(tiff_path))
-    fig, ax = plt.subplots(ncols=1)
-    ax.imshow(img)
-
-    for idx, (node, control) in enumerate(zip(pos, is_control)):
-      if control:
-        ax.text(node[0] * width, node[1] * height, s=idx, color='red', fontsize=1)
-      else:
-        ax.text(node[0] * width, node[1] * height, s=idx, color='black', fontsize=2)
-    for node1, node2 in edges:
-      node1_x, node1_y = pos[node1]
-      node2_x, node2_y = pos[node2]
-      ax.plot( [node1_x * width, node2_x * width] , [node1_y * height, node2_y * height], linewidth=1 )
-
-    for proposal in bboxs:
-      bbox = patches.Rectangle(
-            (proposal[0] * width, proposal[1] * height),
-            proposal[2] * width - proposal[0] * width,
-            proposal[3] * height - proposal[1] * height,
-            linewidth=0.3,
-            edgecolor="red",
-            facecolor="none",
-        )
-      ax.add_patch(bbox)
-    plt.savefig(save_path, bbox_inches="tight", pad_inches=0.0, dpi=600)
- 
 def mergeCluster(cc, bboxs, ratio=None, expand_length=None):
   # default: ratio:0.5, expand_length:0.06
   from collections import deque
   from pathlib import Path
   utils_dir = (Path(__file__).parent.parent.parent).resolve()
   if utils_dir not in sys.path: sys.path.insert(0, str(utils_dir))
-  from det_util import bbox_iou
   # expand how much ratio
   def expand_bboxs(bboxs):
     expand_bboxs = []
@@ -307,8 +274,6 @@ def mergeCC(node_dict, svg_path, width, height):
     cross_shape_edge_attr = get_attr(cross_shape_edges)
     
     return np.array(shape_shape_edges), np.array(cross_shape_edges), np.array(shape_shape_edge_attr), np.array(cross_shape_edge_attr), paths, new_cc
-
-
 
 if __name__ == '__main__':
     graph_builder = SVGGraphBuilderBezier()

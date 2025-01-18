@@ -6,7 +6,7 @@ import torch
 import os
 import numpy as np
 import pickle
-from xml.dom.minidom import parse, Node, parseString
+from xml.dom.minidom import parse, Node
 
 from torch_geometric.data import Data
 from Datasets.svg_parser import SVGParser

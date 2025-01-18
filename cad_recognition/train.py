@@ -7,15 +7,13 @@ import torch
 import numpy as np
 import logging
 import time
-from itertools import repeat, product
+from itertools import product
 
 #from torch_geometric.data import DataLoader, DataListLoader
 from torch import Tensor
 from torch.utils.data import DataLoader
 from torch.nn import functional as F
-import torch_geometric.transforms as T
-from torch_geometric.nn.data_parallel import DataParallel
-from torch_geometric.data import InMemoryDataset
+# from torch_geometric.nn.data_parallel import DataParallel
 from config import OptInit
 from sklearn.metrics import confusion_matrix
 import torchvision
@@ -201,8 +199,8 @@ def main():
     model = SparseCADGCN(opt).to(opt.device)
     
 
-    if opt.multi_gpus:
-        model = DataParallel(SparseDeepGCN(opt)).to(opt.device)
+    # if opt.multi_gpus:
+    #     model = DataParallel(SparseDeepGCN(opt)).to(opt.device)
     logging.info('===> loading pre-trained ...')
     model, opt.best_value, opt.epoch = load_pretrained_models(model, opt.pretrained_model, opt.phase)
     logging.info(model)

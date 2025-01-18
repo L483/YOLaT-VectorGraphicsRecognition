@@ -1,15 +1,13 @@
 # Copyright (c) Microsoft Corporation.
 # Licensed under the MIT License.
 
-
-from xml.dom.minidom import parse, Node, parseString
+from xml.dom.minidom import parse, Node
 from svgpathtools import parse_path, wsvg
-from svgpathtools import Path, Line, QuadraticBezier, CubicBezier, Arc
+from svgpathtools import Path, Line, Arc
 from sklearn.metrics.pairwise import euclidean_distances
 
 import numpy as np
 import copy
-import math
 import os
 
 class SVGParser:

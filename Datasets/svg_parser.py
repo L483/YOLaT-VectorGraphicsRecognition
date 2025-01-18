@@ -3,11 +3,11 @@
 
 
 import numpy as np
-from xml.dom.minidom import parse, Node, parseString
+from xml.dom.minidom import parse, Node
 from sklearn.metrics.pairwise import euclidean_distances
 import copy
-from svgpathtools import parse_path, wsvg
-from svgpathtools import Path, Line, QuadraticBezier, CubicBezier, Arc
+from svgpathtools import parse_path
+from svgpathtools import Path, Arc
 from Datasets.bezier_parser import BezierParser
 import math
 

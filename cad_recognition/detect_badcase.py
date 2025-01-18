@@ -6,28 +6,18 @@ from __future__ import division
 import __init__
 
 from config import OptInit
-from architecture import SparseCADGCN, DetectionLoss
-from Datasets.svg import SESYDFloorPlan
-from utils.ckpt_util import load_pretrained_models, load_pretrained_optimizer, save_checkpoint
-from utils.det_util import non_max_suppression, get_batch_statistics, ap_per_class
-from torch.nn import functional as F
+from utils.ckpt_util import load_pretrained_models
 
 import os
-import sys
 import time
 import datetime
-import argparse
 import numpy as np
 import random
 
 from PIL import Image
 
 import torch
-import torchvision.transforms as transforms
 from torch.utils.data import DataLoader
-from torchvision import datasets
-from torch.autograd import Variable
-import torch_geometric.transforms as T
 from torch_geometric.data import InMemoryDataset
 
 import matplotlib
@@ -49,10 +39,10 @@ if __name__ == "__main__":
         from  Datasets.svg2 import SESYDFloorPlan as CADDataset
     elif opt.graph == 'bezier_edge_attr':
         from  Datasets.svg3 import SESYDFloorPlan as CADDataset
-    elif opt.graph == 'bezier_cc':
-        from  Datasets.graph_dict import SESYDFloorPlan as CADDataset
-    elif opt.graph == 'bezier_cc_bb':
-        from  Datasets.graph_dict2 import SESYDFloorPlan as CADDataset
+    # elif opt.graph == 'bezier_cc':
+    #     from  Datasets.graph_dict import SESYDFloorPlan as CADDataset
+    # elif opt.graph == 'bezier_cc_bb':
+    #     from  Datasets.graph_dict2 import SESYDFloorPlan as CADDataset
     
 
     test_dataset = CADDataset(opt.data_dir, opt, partition = opt.phase, data_aug = False, do_mixup = False)
@@ -71,26 +61,26 @@ if __name__ == "__main__":
     opt.in_channels = test_dataset[0].x.shape[1]
 
     logging.info('===> Loading the network ...')
-    if opt.arch == 'votenet':
-        from votenet import SparseCADGCN, DetectionLoss
-    elif opt.arch == 'centernet':
-        from architecture import SparseCADGCN, DetectionLoss
-    elif opt.arch == 'centernet2':
-        from architecture2 import SparseCADGCN, DetectionLoss
-    elif opt.arch == 'centernet3cc':
-        from architecture3cc import SparseCADGCN, DetectionLoss
-    elif opt.arch == 'two_stage':
-        from two_stage import SparseCADGCN, DetectionLoss
-    elif opt.arch == 'two_stage2':
-        from two_stage2 import SparseCADGCN, DetectionLoss
-    elif opt.arch == 'cluster':
-        from architecture_cluster import SparseCADGCN, DetectionLoss
-    elif opt.arch == 'centernet3cc_rpn':
-        from architecture3cc_rpn import SparseCADGCN, DetectionLoss
+    # if opt.arch == 'votenet':
+    #     from votenet import SparseCADGCN, DetectionLoss
+    # elif opt.arch == 'centernet':
+    #     from architecture import SparseCADGCN, DetectionLoss
+    # elif opt.arch == 'centernet2':
+    #     from architecture2 import SparseCADGCN, DetectionLoss
+    # elif opt.arch == 'centernet3cc':
+    #     from architecture3cc import SparseCADGCN, DetectionLoss
+    # elif opt.arch == 'two_stage':
+    #     from two_stage import SparseCADGCN, DetectionLoss
+    # elif opt.arch == 'two_stage2':
+    #     from two_stage2 import SparseCADGCN, DetectionLoss
+    # elif opt.arch == 'cluster':
+    #     from architecture_cluster import SparseCADGCN, DetectionLoss
+    # elif opt.arch == 'centernet3cc_rpn':
+    #     from architecture3cc_rpn import SparseCADGCN, DetectionLoss
 
     model = SparseCADGCN(opt).to(opt.device)
-    if opt.multi_gpus:
-        model = DataParallel(SparseDeepGCN(opt)).to(opt.device)
+    # if opt.multi_gpus:
+    #     model = DataParallel(SparseDeepGCN(opt)).to(opt.device)
     logging.info('===> loading pre-trained ...')
     model, opt.best_value, opt.epoch = load_pretrained_models(model, opt.pretrained_model, opt.phase)
     logging.info(model)
