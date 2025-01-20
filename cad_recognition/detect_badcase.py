@@ -212,7 +212,7 @@ if __name__ == "__main__":
                 # Rescale boxes to original image
                 # detections = rescale_boxes(detections, opt.img_size, img.shape[:2])
                 unique_labels = np.array(
-                    list(set(detections[:, -1])), dtype=np.int)
+                    list(set(detections[:, -1])), dtype=int)
                 n_cls_preds = len(unique_labels)
                 bbox_colors = random.sample(colors, n_cls_preds)
                 for x1, y1, x2, y2, conf, cls_conf, cls_pred in detections:

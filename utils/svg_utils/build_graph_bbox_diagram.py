@@ -48,7 +48,7 @@ def getConnectedComponent(node_dict):
     pos = node_dict['pos']['spatial']
     is_control = node_dict['attr']['is_control']
     # print(edges)
-    adj = np.eye(pos.shape[0], pos.shape[0]).astype(np.bool)
+    adj = np.eye(pos.shape[0], pos.shape[0]).astype(bool)
     for e in edges:
         adj[e[0], e[1]] = True
         adj[e[1], e[0]] = True
@@ -213,7 +213,7 @@ def mergeCC(node_dict, svg_path, width, height):
     # print("draw bbox and node of {}".format(svg_path))
 
     cross_shape_edges = []
-    same_cc = np.zeros((len(bboxs), len(bboxs))).astype(np.bool)
+    same_cc = np.zeros((len(bboxs), len(bboxs))).astype(bool)
     for i, parent_bb in enumerate(bboxs):
         for j, child_bb in enumerate(bboxs):
             if i == j:
@@ -260,7 +260,7 @@ def mergeCC(node_dict, svg_path, width, height):
             visited[i] = True
             get_all_neighbors(i, ret)
 
-    visited = np.zeros(same_cc.shape[0]).astype(np.bool)
+    visited = np.zeros(same_cc.shape[0]).astype(bool)
     merged_cc = []
     for i, all_neighbors in enumerate(same_cc):
         if visited[i]:
@@ -371,7 +371,7 @@ if __name__ == '__main__':
             # node_dict['attr']['is_control'] = np.concatenate([node_dict['attr']['is_control'], np.zeros((super_pos.shape[0], 1)).astype(np.bool)], axis = 0)
             # node_dict['attr']['is_super'] = np.concatenate([np.zeros((start_end_size, 1)).astype(np.bool), np.ones((super_pos.shape[0], 1)).astype(np.bool)], axis = 0)
             node_dict['attr']['is_super'] = np.zeros(
-                (start_end_size, 1)).astype(np.bool)
+                (start_end_size, 1)).astype(bool)
             if len(cross_shape_edge_attr) == 0:
                 node_dict['edge_attr']['super'] = shape_shape_edge_attr
             else:

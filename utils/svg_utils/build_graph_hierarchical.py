@@ -47,7 +47,7 @@ def getConnectedComponent(node_dict):
     pos = node_dict['pos']['spatial']
     is_control = node_dict['attr']['is_control']
     # print(edges)
-    adj = np.eye(pos.shape[0], pos.shape[0]).astype(np.bool)
+    adj = np.eye(pos.shape[0], pos.shape[0]).astype(bool)
     for e in edges:
         adj[e[0], e[1]] = True
         adj[e[1], e[0]] = True
@@ -238,7 +238,7 @@ if __name__ == '__main__':
             # node_dict['attr']['is_control'] = np.concatenate([node_dict['attr']['is_control'], np.zeros((super_pos.shape[0], 1)).astype(np.bool)], axis = 0)
             # node_dict['attr']['is_super'] = np.concatenate([np.zeros((start_end_size, 1)).astype(np.bool), np.ones((super_pos.shape[0], 1)).astype(np.bool)], axis = 0)
             node_dict['attr']['is_super'] = np.zeros(
-                (start_end_size, 1)).astype(np.bool)
+                (start_end_size, 1)).astype(bool)
             node_dict['edge_attr']['super'] = np.concatenate(
                 [shape_shape_edge_attr, cross_shape_edge_attr], axis=0)
             # print(node_dict['attr']['is_control'].shape, node_dict['attr']['is_super'].shape)
