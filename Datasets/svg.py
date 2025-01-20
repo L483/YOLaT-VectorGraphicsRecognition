@@ -239,11 +239,12 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
         return bound_rect(p0, p1, p2, p3)
 
     def random_transfer(self, pos, bbox, gt_bbox):
-        scale = np.random.random() * 0.1 + 0.9
-        angle = np.random.random() * np.pi * 2
+        rng = np.random.default_rng()
+        scale = rng.random() * 0.1 + 0.9
+        angle = rng.random() * np.pi * 2
         translate = [0, 0]
-        translate[0] = np.random.random() * 0.2 - 0.1
-        translate[1] = np.random.random() * 0.2 - 0.1
+        translate[0] = rng.random() * 0.2 - 0.1
+        translate[1] = rng.random() * 0.2 - 0.1
 
         pos = self.__transform__(pos, scale, angle, translate)
         bbox = self.__transform_bbox__(bbox, scale, angle, translate)

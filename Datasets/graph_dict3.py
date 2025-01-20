@@ -290,16 +290,17 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
 
     def random_transfer(self, pos, bbox, gt_bbox, bbox_targets):
         scale_ratio = 0.6
-        scale = (np.random.random() * 2 - 1) * scale_ratio + \
-            1  # np.random.random() * 0.2 + 0.9
-        angle = np.random.random() * np.pi * 2
+        rng = np.random.default_rng()
+        scale = (rng.random() * 2 - 1) * scale_ratio + \
+            1  # rng.random() * 0.2 + 0.9
+        angle = rng.random() * np.pi * 2
 
         translate_ratio = 0.1
         translate = [0, 0]
-        translate[0] = (np.random.random() * 2 - 1) * \
-            translate_ratio  # np.random.random() * 0.2 - 0.1
-        translate[1] = (np.random.random() * 2 - 1) * \
-            translate_ratio  # np.random.random() * 0.2 - 0.1
+        translate[0] = (rng.random() * 2 - 1) * \
+            translate_ratio  # rng.random() * 0.2 - 0.1
+        translate[1] = (rng.random() * 2 - 1) * \
+            translate_ratio  # rng.random() * 0.2 - 0.1
 
         pos = self.__transform__(pos, scale, angle, translate)
         # bbox = self.__transform_bbox__(bbox, scale, angle, translate)
@@ -896,14 +897,15 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
             pos_bb1 = normalize_pos(pos_bb1)
 
             right = random.choice([True, False])
+            rng = np.random.default_rng()
             if right:
-                translate_x = 1 + np.random.random() * 0.1
-                translate_y = np.random.random()
+                translate_x = 1 + rng.random() * 0.1
+                translate_y = rng.random()
                 pos_bb1[:, 0] += translate_x
                 pos_bb1[:, 1] += translate_y
             else:
-                translate_x = np.random.random()
-                translate_y = 1 + 0.1 * np.random.random()
+                translate_x = rng.random()
+                translate_y = 1 + 0.1 * rng.random()
                 pos_bb1[:, 0] += translate_x
                 pos_bb1[:, 1] += translate_y
 
@@ -1086,7 +1088,7 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
                     min_x = int(pos_bbox[:, 0].min(0) * width)
                     max_y = int(pos_bbox[:, 1].max(0) * height)
                     min_y = int(pos_bbox[:, 1].min(0) * height)
-                    c = tuple(np.random.randint(0, 255, 3).astype(np.uint8))
+                    c = tuple(rng.randint(0, 255, 3).astype(np.uint8))
                     print(c)
                     cv2.rectangle(img, (min_x, min_y), (max_x, max_y), (int(c[0]), int(c[1]), int(c[2])), 2)
                     cv2.putText(img, '%d'%(labels[i]), (min_x, min_y), cv2.FONT_HERSHEY_SIMPLEX, 1, (int(c[0]), int(c[1]), int(c[2])), 2, cv2.LINE_AA)
