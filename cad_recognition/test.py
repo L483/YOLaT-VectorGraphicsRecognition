@@ -41,7 +41,7 @@ def main():
 #    else:
 #        train_loader = DataLoader(train_dataset, batch_size=opt.batch_size, shuffle=True, num_workers=4)
     opt.n_classes = len(list(test_dataset.class_dict.keys()))
-    classes = list(range(0, opt.n_classes))
+    # classes = list(range(0, opt.n_classes))
     opt.in_channels = test_dataset[0].x.shape[1]
 
     logging.info('===> Loading the network ...')
@@ -58,8 +58,8 @@ def main():
         model, opt.pretrained_model, opt.phase)
     logging.info(model)
 
-    imgs = []  # Stores image paths
-    img_detections = []  # Stores detections for each image index
+    # imgs = []  # Stores image paths
+    # img_detections = []  # Stores detections for each image index
 
     opt.test_values = AverageMeter()
     opt.test_value = 0.

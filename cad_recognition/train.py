@@ -190,11 +190,11 @@ def main():
 
     test_dataset = CADDataset(opt.data_dir, opt, partition='test', data_aug=False,
                               do_mixup=False, drop_edge=False, bbox_sampling_step=opt.bbox_sampling_step)
-    test_loader = DataLoader(test_dataset,
-                             batch_size=opt.batch_size * 2,
-                             shuffle=False,
-                             num_workers=8,
-                             collate_fn=collate)
+    # test_loader = DataLoader(test_dataset,
+    #                          batch_size=opt.batch_size * 2,
+    #                          shuffle=False,
+    #                          num_workers=8,
+    #                          collate_fn=collate)
 
 #    if opt.multi_gpus:
 #        train_loader = DataListLoader(train_dataset, batch_size=opt.batch_size, shuffle=True, num_workers=4)
@@ -236,8 +236,8 @@ def main():
     for _ in range(opt.total_epochs):
         opt.epoch += 1
         train(model, train_loader, optimizer, scheduler, criterion, opt)
-        if opt.epoch % 1 == 0 and opt.epoch >= 20:
-            test_value = test(model, test_loader, criterion, opt)
+        # if opt.epoch % 1 == 0 and opt.epoch >= 20:
+        #     test_value = test(model, test_loader, criterion, opt)
         scheduler.step()
     logging.info('Saving the final model.Finish!')
 
@@ -349,7 +349,7 @@ def test(model, test_loader, criterion, opt):
         for i_batch, (data, slices) in enumerate(test_loader):
             print(i_batch)
             torch.cuda.synchronize()
-            start_time = time.time()
+            # start_time = time.time()
             pos_slice = slices['pos']
             for key in slices:
                 if 'edge' in key:
@@ -406,14 +406,14 @@ def test(model, test_loader, criterion, opt):
             image_slice = slices['x']
             label_slice = slices['gt_labels']
 
-            new_pred_coord_list = []
-            new_pred_cls_list = []
+            # new_pred_coord_list = []
+            # new_pred_cls_list = []
 
             for i in range(0, len(image_slice) - 1):
-                start = image_slice[i]
-                end = image_slice[i + 1]
-                is_control_mask = ~data.is_control[start:end].squeeze()
-                pos_img = data.pos[start:end][is_control_mask].cuda()
+                # start = image_slice[i]
+                # end = image_slice[i + 1]
+                # is_control_mask = ~data.is_control[start:end].squeeze()
+                # pos_img = data.pos[start:end][is_control_mask].cuda()
 
                 t_start = slices['bbox'][i]
                 t_end = slices['bbox'][i + 1]

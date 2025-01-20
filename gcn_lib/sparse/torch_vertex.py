@@ -146,7 +146,7 @@ class AttrRelativeEdgeConvGlobalPool(MessagePassing):
         angle = diff / (np.sqrt(euc_d2) + 1e-7)
         w = 1 / np.exp(euc_d2)
         '''
-        x_i_root = x_i[:, self.in_channels:]
+        # x_i_root = x_i[:, self.in_channels:]
         x_i = x_i[:, 0:self.in_channels]
         x_j = x_j[:, 0:self.in_channels]
 

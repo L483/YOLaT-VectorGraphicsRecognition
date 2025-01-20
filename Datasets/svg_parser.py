@@ -110,7 +110,7 @@ class SVGGraphBuilderBezier2:
             euc_d2 = (pos_start[0] - pos_end[0]) * (pos_start[0] - pos_end[0]) + \
                 (pos_start[1] - pos_end[1]) * (pos_start[1] - pos_end[1])
             angle = (pos_start[0] - pos_end[0]) / (np.sqrt(euc_d2) + 1e-7)
-            w = 1 / np.exp(euc_d2)
+            # w = 1 / np.exp(euc_d2)
             # w = (w - 0.8) / 0.2
             # print(angle, w)
             if math.isnan(angle):
@@ -215,7 +215,7 @@ class SVGGraphBuilderBezier2:
 
         # print(merging_map)
         merged_graph_dict = {}
-        oldedge2newedge = {}
+        # oldedge2newedge = {}
         for key in graph_dict:
             if key == 'edge_attr':
                 continue
@@ -371,7 +371,7 @@ class SVGGraphBuilderShape:
 
     def build_graph(self, shape_list):
         graph_dict = {}
-        idx_offset = 0
+        # idx_offset = 0
 
         feats = []
         poses = []
@@ -396,7 +396,7 @@ class SVGGraphBuilderShape:
 
             elif shape['shape_name'] == 'path':
                 path = parse_path(shape['d'])
-                bezier_path = Path()
+                # bezier_path = Path()
                 for element in path:
                     if isinstance(element, Arc):
                         arc_path = element
@@ -645,7 +645,7 @@ class SVGGraphBuilderBezier:
 
         # print(merging_map)
         merged_graph_dict = {}
-        oldedge2newedge = {}
+        # oldedge2newedge = {}
         for key in graph_dict:
             if key == 'edge_attr':
                 continue

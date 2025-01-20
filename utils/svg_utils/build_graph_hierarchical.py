@@ -80,10 +80,10 @@ def get_connected_component(node_dict):
 
 
 def merge_cc(node_dict):
-    edges = node_dict['edge']['shape']
+    # edges = node_dict['edge']['shape']
     pos = node_dict['pos']['spatial']
-    color = node_dict['attr']['color']
-    is_control = node_dict['attr']['is_control']
+    # color = node_dict['attr']['color']
+    # is_control = node_dict['attr']['is_control']
 
     cc = get_connected_component(node_dict)
 
@@ -91,8 +91,8 @@ def merge_cc(node_dict):
     bboxs = []
 
     shape_shape_edges = []
-    super_shape_edges = []
-    offset = pos.shape[0]
+    # super_shape_edges = []
+    # offset = pos.shape[0]
     for i, cluster in enumerate(cc):
         pos_cluster = pos[cluster]
         max_x = pos_cluster[:, 0].max(0)
@@ -164,7 +164,7 @@ def merge_cc(node_dict):
             euc_d2 = (pos_start[0] - pos_end[0]) * (pos_start[0] - pos_end[0]) + \
                 (pos_start[1] - pos_end[1]) * (pos_start[1] - pos_end[1])
             angle = (pos_start[0] - pos_end[0]) / (np.sqrt(euc_d2) + 1e-7)
-            w = 1 / np.exp(euc_d2)
+            # w = 1 / np.exp(euc_d2)
             # w = (w - 0.8) / 0.2
             # print(angle, w)
             if math.isnan(angle):

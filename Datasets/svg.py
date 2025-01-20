@@ -287,11 +287,11 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
         e_attr = graph_dict['edge_attr']['shape']
 
         if False:
-            top = 2000
-            left = 80
-            bottom = 2700
-            right = 620
-            A = np.zeros((pos.shape[0], pos.shape[0]))
+            # top = 2000
+            # left = 80
+            # bottom = 2700
+            # right = 620
+            # A = np.zeros((pos.shape[0], pos.shape[0]))
             for e in edge:
                 print(e)
                 p0 = pos[e[0]]
@@ -306,7 +306,7 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
                 # if p0[0] > left and p0[0] < right and p1[1] > top and p1[1] < bottom and p0[0] > left and p0[0] < right and p1[1] > top and p1[1] < bottom:
                 #    print('foo')
                 #    A[e[0], e[1]] = 1
-            G = nx.from_numpy_array(A)
+            # G = nx.from_numpy_array(A)
             # print(G.edges)
             raise SystemExit
 

@@ -160,11 +160,12 @@ def merge_cluster(cc, bboxs, ratio=None, expand_length=None):
     return new_cc, new_bboxs
 
 
-def merge_cc(node_dict, svg_path, width, height):
-    edges = node_dict['edge']['shape']
+# def merge_cc(node_dict, svg_path, width, height):
+def merge_cc(node_dict, _, width, height):
+    # edges = node_dict['edge']['shape']
     pos = node_dict['pos']['spatial']
-    color = node_dict['attr']['color']
-    is_control = node_dict['attr']['is_control']
+    # color = node_dict['attr']['color']
+    # is_control = node_dict['attr']['is_control']
 
     cc = get_connected_component(node_dict)
 
@@ -208,7 +209,7 @@ def merge_cc(node_dict, svg_path, width, height):
                               Line(p3, p0)
                               ))
 
-    svg_path_list = svg_path.split('/')
+    # svg_path_list = svg_path.split('/')
 
     # print("draw bbox and node of {}".format(svg_path))
 
@@ -286,7 +287,7 @@ def merge_cc(node_dict, svg_path, width, height):
             euc_d2 = (pos_start[0] - pos_end[0]) * (pos_start[0] - pos_end[0]) + \
                 (pos_start[1] - pos_end[1]) * (pos_start[1] - pos_end[1])
             angle = (pos_start[0] - pos_end[0]) / (np.sqrt(euc_d2) + 1e-7)
-            w = 1 / np.exp(euc_d2)
+            # w = 1 / np.exp(euc_d2)
             # w = (w - 0.8) / 0.2
             # print(angle, w)
             if math.isnan(angle):

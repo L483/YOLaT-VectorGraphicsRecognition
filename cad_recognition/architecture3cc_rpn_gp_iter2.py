@@ -75,12 +75,12 @@ class SparseCADGCN(torch.nn.Module):
         super(SparseCADGCN, self).__init__()
 
         self.expand_ratio = expand_ratio
-        channels = opt.n_filters
+        # channels = opt.n_filters
         act = opt.act
         norm = opt.norm
         bias = opt.bias
-        conv = opt.conv
-        c_growth = channels
+        # conv = opt.conv
+        # c_growth = channels
         self.n_classes = opt.n_classes
         self.classifier = opt.classifier
         self.class_specific = opt.class_specific
@@ -110,7 +110,7 @@ class SparseCADGCN(torch.nn.Module):
 
         edges = [data.edge.cuda().T]
         pred_bbox = data.bbox.cuda()
-        stat_feats = data.stat_feats.cuda()
+        # stat_feats = data.stat_feats.cuda()
 
         edge_weights = [None]
         edge_attrs = [data.e_attr.cuda()]
@@ -229,7 +229,7 @@ class SparseCADGCN(torch.nn.Module):
             # print(new_data.x.size(), new_data.bbox_idx.size(),  len(sorted(list(set(new_data.bbox_idx.cpu().numpy())))), len(roots))
 
             torch.cuda.synchronize()
-            st = time.time()
+            # st = time.time()
             new_bbox_idx = [0]
             count = 0
             for i in range(1, new_data.bbox_idx.size(0)):
@@ -251,19 +251,19 @@ class SparseCADGCN(torch.nn.Module):
 
         # torch.cuda.synchronize()
         # st = time.time()
-        total_infer_time = 0
+        # total_infer_time = 0
         new_data = build_data(data, slice_pos, slice_edge,
                               slice_edge_super, slice_bbox)
         # torch.cuda.synchronize()
         # et = time.time()
         # print('data building 0: ', et-st)
         torch.cuda.synchronize()
-        st = time.time()
+        # st = time.time()
         pred_cls, pred_bbox = self.forward(new_data, slices)
         torch.cuda.synchronize()
-        et = time.time()
+        # et = time.time()
         # print('inference 0: ', et-st)
-        total_infer_time += et - st
+        # total_infer_time += et - st
 
         _, is_object = pred_cls.max(1)
         # print(is_object)
@@ -320,12 +320,12 @@ class SparseCADGCN(torch.nn.Module):
             # et = time.time()
             # print('data building 1: ', et-st)
             torch.cuda.synchronize()
-            st = time.time()
+            # st = time.time()
             pred_cls2, pred_bbox2 = self.forward(new_data, slices)
             torch.cuda.synchronize()
-            et = time.time()
+            # et = time.time()
             # print('inference 1: ', et-st)
-            total_infer_time += et - st
+            # total_infer_time += et - st
             # print('total inference time', total_infer_time)
             # raise SystemExit
 
@@ -387,7 +387,7 @@ class DetectionLoss(torch.nn.Module):
 
     def forward(self, out, data):
         pred_cls = out[0]
-        is_super = data.is_super
+        # is_super = data.is_super
         gt_cls = data.labels.cuda()
 
         if self.classifier != 'softmax':

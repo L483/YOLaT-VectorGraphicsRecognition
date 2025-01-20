@@ -84,7 +84,7 @@ def split_circle(points, circles):
 
     arc = {'start_end': [], 'param': [], 'idx': []}
     unsplitted_idx = []
-    count = 0
+    # count = 0
     for circle_i, (cx, cy, r) in enumerate(zip(cxs, cys, rs)):
         on_curve = point_on_circle(points[:, 0], points[:, 1], cx, cy, r)
         # print(cx, cy, r, np.sum(on_curve))
@@ -186,13 +186,13 @@ def split_circle(points, circles):
             arc['start_end'].append(start_end)
             arc['param'].append(param)
             # arc['idx'].append(count)
-            count += 1
+            # count += 1
 
         start_end, param = build_arc(sorted_pos[-1], sorted_pos[0], cx, cy, r)
         arc['start_end'].append(start_end)
         arc['param'].append(param)
         # arc['idx'].append(count)
-        count += 1
+        # count += 1
 
     circles = {'param': circles['param'][unsplitted_idx]}
     for key in arc:
@@ -239,8 +239,8 @@ def split_line(points, lines):
         max_x = max(x0, x1)
         min_y = min(y0, y1)
         max_y = max(y0, y1)
-        out_rect = (x - min_x < -1) | (x - max_x >
-                                       1) | (y - min_y < -1) | (y - max_y > 1)
+        # out_rect = (x - min_x < -1) | (x - max_x >
+        #                                1) | (y - min_y < -1) | (y - max_y > 1)
         is_start_end = (x - min_x <= 1) & (x - min_x >= -
                                            1) & (y - min_y <= 1) & (y - min_y >= -1)
         is_start_end |= (x - max_x <= 1) & (x - max_x >= -
@@ -327,7 +327,7 @@ def split_line(points, lines):
 
 def split_cross(shape_list):
     # print(shape_list)
-    start_end = []
+    # start_end = []
     type_dict = {'line': {'start_end': []},  # , 'idx':[]},
                  'circle': {'param': []},  # , 'idx':[]},
                  'arc': {'start_end': [], 'param': []}  # , 'idx':[]}

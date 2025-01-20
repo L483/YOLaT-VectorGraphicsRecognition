@@ -328,8 +328,8 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
         e_attr_super = graph_dict['edge_attr']['super']
         is_super = graph_dict['attr']['is_super']
         is_control = graph_dict['attr']['is_control']
-        width = graph_dict['img_width']
-        height = graph_dict['img_height']
+        # width = graph_dict['img_width']
+        # height = graph_dict['img_height']
 
         # print(pos.shape, is_super.shape, edge.shape, edge_super.shape, e_attr.shape, e_attr_super.shape)
         # self.mixup
@@ -439,8 +439,8 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
                 p = pos_cluster[i]
                 point_exist[y_values_dict[p[1]]][x_values_dict[p[0]]].append(i)
 
-            def set_bit(value, bit):
-                return value | (1 << bit)
+            # def set_bit(value, bit):
+            #     return value | (1 << bit)
 
             d00 = [[None for _ in range(len(x_values))]
                    for _ in range(len(y_values))]
@@ -670,7 +670,7 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
                     has_obj = 0
 
                 ###################### obtain stats#################################
-                stats = []
+                # stats = []
                 n_points = pos_bbox.shape[0]
                 n_edges = edge_bbox.shape[0]
 
@@ -715,13 +715,13 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
                 min_angle = np.min(angles)
                 std_angle = np.std(angles)
 
-                long_short_ratio = max(width, height) * \
-                    1.0 / min(width, height)
+                # long_short_ratio = max(width, height) * \
+                #     1.0 / min(width, height)
 
                 mean_edge_distance = np.mean(e_attr_bbox[:, -1])
                 std_edge_distance = np.std(e_attr_bbox[:, -1])
-                mean_edge_angle = np.mean(e_attr_bbox[:, -2])
-                std_edge_angle = np.std(e_attr_bbox[:, -2])
+                # mean_edge_angle = np.mean(e_attr_bbox[:, -2])
+                # std_edge_angle = np.std(e_attr_bbox[:, -2])
 
                 '''
                 stat_feat = np.array([n_points, n_edges, n_angle_90, n_angle_less90, n_angle_more90, 
@@ -844,7 +844,7 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
         for e in edge_super:
             cc_edge_super[cc_idx[e[0]]].append(e)
 
-        grouped_idx = [[] for _ in range(len(cc))]
+        # grouped_idx = [[] for _ in range(len(cc))]
         offset = pos.shape[0]
 
         new_cc = []
