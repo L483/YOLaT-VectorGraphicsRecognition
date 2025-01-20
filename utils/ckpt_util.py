@@ -26,7 +26,7 @@ def load_pretrained_models(model, pretrained_model, phase, ismax=True):
                 else:
                     show_best_value = True
             except:
-                best_value = best_value
+                # best_value = best_value
                 show_best_value = False
 
             model_dict = model.state_dict()
@@ -87,7 +87,8 @@ def load_pretrained_optimizer(pretrained_model, optimizer, scheduler, lr, use_ck
                     try:
                         lr = scheduler.get_lr()[0]
                     except:
-                        lr = lr
+                        # lr = lr
+                        pass
 
     return optimizer, scheduler, lr
 

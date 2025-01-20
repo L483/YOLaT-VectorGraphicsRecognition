@@ -133,8 +133,8 @@ class SparseCADGCN(torch.nn.Module):
 
         if self.classifier != 'softmax':
             pred_cls = torch.sigmoid(pred_cls)
-        else:
-            pred_cls = pred_cls
+        # else:
+        #     pred_cls = pred_cls
 
         return pred_cls, pred_bbox
 
@@ -306,8 +306,8 @@ class SparseCADGCN(torch.nn.Module):
         # print('obtain slice 1: ', et-st)
 
         if len(slice_pos) == 0:
-            pred_cls = pred_cls
-            pred_bbox = pred_bbox
+            # pred_cls = pred_cls
+            # pred_bbox = pred_bbox
             slice_image_bbox = slice_image_bbox_root
             slice_bbox = slice_bbox_root
         else:
