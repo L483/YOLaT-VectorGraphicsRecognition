@@ -38,7 +38,7 @@ def load_pretrained_models(model, pretrained_model, phase, ismax=True):
             is_ckpt_multi_gpus = True if list(ckpt_model_state_dict)[
                 0][0] == 'm' else False
 
-            if not (is_model_multi_gpus == is_ckpt_multi_gpus):
+            if is_model_multi_gpus != is_ckpt_multi_gpus:
                 temp_dict = OrderedDict()
                 for k, v in ckpt_model_state_dict.items():
                     if is_ckpt_multi_gpus:
@@ -72,8 +72,7 @@ def load_pretrained_models(model, pretrained_model, phase, ismax=True):
 
 
 def load_pretrained_optimizer(pretrained_model, optimizer, scheduler, lr, use_ckpt_lr=True):
-    if pretrained_model:
-        if os.path.isfile(pretrained_model):
+    if pretrained_model and os.path.isfile(pretrained_model):
             checkpoint = torch.load(pretrained_model)
             if 'optimizer_state_dict' in checkpoint.keys():
                 optimizer.load_state_dict(checkpoint['optimizer_state_dict'])

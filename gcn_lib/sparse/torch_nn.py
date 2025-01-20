@@ -41,7 +41,7 @@ class MultiSeq(Seq):
 
     def forward(self, *inputs):
         for module in self._modules.values():
-            if type(inputs) == tuple:
+            if isinstance(inputs, tuple):
                 inputs = module(*inputs)
             else:
                 inputs = module(inputs)
@@ -58,9 +58,7 @@ class MLP(Seq):
 
             m.append(Lin(channels[i - 1], channels[i], bias))
 
-            if (i == len(channels) - 1) and last_lin:
-                pass
-            else:
+            if not((i == len(channels) - 1) and last_lin):
                 if norm is not None and norm.lower() != 'none':
                     m.append(norm_layer(norm, channels[i]))
                 if act is not None and act.lower() != 'none':
