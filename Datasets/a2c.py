@@ -175,7 +175,7 @@ def a2c(x1, y1, x2, y2, fa, fs, rx, ry, phi):
 
 
 def get_mapped_list(result, rx, ry, sin_phi, cos_phi, cc):
-    mappe_list = []
+    mapped_list = []
     for elem in result:
         curve = []
         for i in range(0, len(elem), 2):
@@ -194,5 +194,5 @@ def get_mapped_list(result, rx, ry, sin_phi, cos_phi, cc):
             elem[i + 0] = xp + cc[0]
             elem[i + 1] = yp + cc[1]
             curve.append(complex(elem[i + 0], elem[i + 1]))
-        mappe_list.append(curve)
-    return mappe_list
+        mapped_list.append(curve)
+    return mapped_list
