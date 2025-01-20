@@ -80,7 +80,7 @@ def compute_ap(recall, precision):
 
     # to calculate area under PR curve, look for points
     # where X axis (recall) changes value
-    i = np.where(recall[1:] != recall[:-1])[0]
+    i = np.nonzero(recall[1:] != recall[:-1])[0]
 
     # and sum (\Delta recall) * precision
     ap = np.sum((recall[i + 1] - recall[i]) * precision[i + 1])
@@ -231,7 +231,7 @@ def intersect_bb_idx(box1, box2, x1y1x2y2=True):
 
     mask = (inter_rect_x2 > inter_rect_x1) & (inter_rect_y2 > inter_rect_y1)
 
-    return np.where(mask)[0]
+    return np.nonzero(mask)[0]
 
 
 def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.4):

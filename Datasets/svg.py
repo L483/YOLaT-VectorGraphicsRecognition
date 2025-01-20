@@ -133,7 +133,7 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
             in_object = (diff_0[:, 0] >= -th) & (diff_0[:, 1]
                                                  >= -th) & (diff_1[:, 0] <= th) & (diff_1[:, 1] <= th)
 
-            object_index = np.where(in_object)[0]
+            object_index = np.nonzero(in_object)[0]
             if len(object_index) > 1:
                 # print(object_index)
                 # print('node', p[0] * width, p[1] * height, 'is inside more than one object')

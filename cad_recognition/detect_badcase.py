@@ -223,7 +223,7 @@ if __name__ == "__main__":
                     box_h = y2 - y1
 
                     color = bbox_colors[int(
-                        np.where(unique_labels == int(cls_pred))[0])]
+                        np.nonzero(unique_labels == int(cls_pred))[0])]
                     # Create a Rectangle patch
                     bbox = patches.Rectangle(
                         (x1, y1), box_w, box_h, linewidth=2, edgecolor=color, facecolor="none")
