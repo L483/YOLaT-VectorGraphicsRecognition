@@ -17,7 +17,7 @@ sys.path.insert(0, os.path.join(
 
 
 def shape2Path(type_dict):
-    # svg to Bézier curve
+    # svg to Bezier curve
     parser = BezierParser()
     paths = Path()
 
@@ -48,7 +48,7 @@ def shape2Path(type_dict):
     return paths
 
 
-def getConnnectedComponent(node_dict):
+def getConnectedComponent(node_dict):
     edges = node_dict['edge']['shape']
     pos = node_dict['pos']['spatial']
     is_control = node_dict['attr']['is_control']
@@ -90,7 +90,7 @@ def mergeCC(node_dict):
     color = node_dict['attr']['color']
     is_control = node_dict['attr']['is_control']
 
-    cc = getConnnectedComponent(node_dict)
+    cc = getConnectedComponent(node_dict)
 
     paths = []
     bboxs = []
@@ -164,7 +164,7 @@ def mergeCC(node_dict):
                         same_cc[i, j] = True
                         same_cc[j, i] = True
 
-    def get_all_neighboors(root, ret):
+    def get_all_neighbors(root, ret):
         all_neighbors = same_cc[root]
         for i, is_neighbor in enumerate(all_neighbors):
             if i == root:
@@ -175,7 +175,7 @@ def mergeCC(node_dict):
                 continue
             ret.append(i)
             visited[i] = True
-            get_all_neighboors(i, ret)
+            get_all_neighbors(i, ret)
 
     visited = np.zeros(same_cc.shape[0]).astype(np.bool)
     merged_cc = []
@@ -183,7 +183,7 @@ def mergeCC(node_dict):
         if visited[i]:
             continue
         cluster = [i]
-        get_all_neighboors(i, cluster)
+        get_all_neighbors(i, cluster)
         merged_cc.append(cluster)
         visited[i] = True
 
@@ -264,7 +264,7 @@ if __name__ == '__main__':
                     if ee[0] == ee[1]:
                         print(ee)
 
-            # getConnnectedComponent(node_dict)
+            # getConnectedComponent(node_dict)
             # super_pos, super_color, shape_shape_edges, super_shape_edges, super_super_edges, bbox_paths = getSuperNode(node_dict)
 
             # merge connected components
@@ -314,7 +314,7 @@ if __name__ == '__main__':
 #     color = node_dict['attr']['color']
 #     is_control = node_dict['attr']['is_control']
 
-#     cc = getConnnectedComponent(node_dict)
+#     cc = getConnectedComponent(node_dict)
 
 #     paths = []
 #     bboxs = []

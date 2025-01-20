@@ -45,7 +45,7 @@ def unit_vector_angle(ux, uy, vx, vy):
 def get_arc_center(x1, y1, x2, y2, fa, fs, rx, ry, sin_phi, cos_phi):
     # Step 1.
     #
-    # Moving an ellipse so origin will be the middlepoint between our two
+    # Moving an ellipse so origin will be the midpoint between our two
     # points. After that, rotate it to line up ellipse axes with coordinate
     # axes.
     #

@@ -43,7 +43,7 @@ def shape2Path(type_dict):
     return paths
 
 
-def getConnnectedComponent(node_dict):
+def getConnectedComponent(node_dict):
     edges = node_dict['edge']['shape']
     pos = node_dict['pos']['spatial']
     is_control = node_dict['attr']['is_control']
@@ -166,7 +166,7 @@ def mergeCC(node_dict, svg_path, width, height):
     color = node_dict['attr']['color']
     is_control = node_dict['attr']['is_control']
 
-    cc = getConnnectedComponent(node_dict)
+    cc = getConnectedComponent(node_dict)
 
     bboxs = []
     for i, cluster in enumerate(cc):
@@ -247,7 +247,7 @@ def mergeCC(node_dict, svg_path, width, height):
                         same_cc[i, j] = True
                         same_cc[j, i] = True
 
-    def get_all_neighboors(root, ret):
+    def get_all_neighbors(root, ret):
         all_neighbors = same_cc[root]
         for i, is_neighbor in enumerate(all_neighbors):
             if i == root:
@@ -258,7 +258,7 @@ def mergeCC(node_dict, svg_path, width, height):
                 continue
             ret.append(i)
             visited[i] = True
-            get_all_neighboors(i, ret)
+            get_all_neighbors(i, ret)
 
     visited = np.zeros(same_cc.shape[0]).astype(np.bool)
     merged_cc = []
@@ -266,7 +266,7 @@ def mergeCC(node_dict, svg_path, width, height):
         if visited[i]:
             continue
         cluster = [i]
-        get_all_neighboors(i, cluster)
+        get_all_neighbors(i, cluster)
         merged_cc.append(cluster)
         visited[i] = True
 
@@ -350,7 +350,7 @@ if __name__ == '__main__':
                     if ee[0] == ee[1]:
                         print(ee)
 
-            # getConnnectedComponent(node_dict)
+            # getConnectedComponent(node_dict)
             # super_pos, super_color, shape_shape_edges, super_shape_edges, super_super_edges, bbox_paths = getSuperNode(node_dict)
 
             shape_shape_edges, cross_shape_edges, shape_shape_edge_attr, cross_shape_edge_attr, bbox_paths, cc = mergeCC(

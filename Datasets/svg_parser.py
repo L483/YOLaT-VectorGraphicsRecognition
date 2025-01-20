@@ -39,7 +39,7 @@ class SVGGraphBuilderBezier2:
         if node['color'] in self.colors:
             ret['color'] = self.colors[node['color']]
         else:
-            print('unsuported stroke color!')
+            print('unsupported stroke color!')
             raise SystemExit
 
         # stroke-width
@@ -65,7 +65,7 @@ class SVGGraphBuilderBezier2:
             if attrs['stroke'] in self.colors:
                 color = self.colors[attrs['stroke']]
             else:
-                print('unsuported stroke color!')
+                print('unsupported stroke color!')
                 raise SystemExit
 
             stroke_width = (float(attrs['stroke-width']) - 3) / 3.0
@@ -486,7 +486,7 @@ class SVGGraphBuilderBezier:
         if node['color'] in self.colors:
             ret['color'] = self.colors[node['color']]
         else:
-            print('unsuported stroke color!')
+            print('unsupported stroke color!')
             raise SystemExit
 
         # stroke-width
@@ -512,7 +512,7 @@ class SVGGraphBuilderBezier:
             if attrs['stroke'] in self.colors:
                 color = self.colors[attrs['stroke']]
             else:
-                print('unsuported stroke color!')
+                print('unsupported stroke color!')
                 raise SystemExit
 
             stroke_width = (float(attrs['stroke-width']) - 3) / 3.0

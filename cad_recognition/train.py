@@ -56,7 +56,7 @@ def non_max_suppression(prediction, conf_thres=0.25, iou_thres=0.45, classes=Non
         # x[((x[..., 2:4] < min_wh) | (x[..., 2:4] > max_wh)).any(1), 4] = 0  # width-height
         x = x[xc[xi]]  # confidence
 
-        # Cat apriori labels if autolabelling
+        # Cat a priori labels if auto-labelling
         if labels and len(labels[xi]):
             l = labels[xi]
             v = torch.zeros((len(l), nc + 5), device=x.device)
@@ -419,7 +419,7 @@ def test(model, test_loader, criterion, opt):
                 pred_coord_img = pred_coord[t_start:t_end]
                 pred_cls_img = pred_cls[t_start:t_end]
 
-                # print(start, end, pred_cls_img.size(), pred_cls.size(), 'fooo')
+                # print(start, end, pred_cls_img.size(), pred_cls.size(), 'foo')
 
                 # coord = data.bbox[start:end][is_control_mask]
                 # center = (coord[:, 0:2] + coord[:, 2:]) / 2.0

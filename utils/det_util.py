@@ -71,19 +71,19 @@ def compute_ap(recall, precision):
     """
     # correct AP calculation
     # first append sentinel values at the end
-    mrec = np.concatenate(([0.0], recall, [1.0]))
-    mpre = np.concatenate(([0.0], precision, [0.0]))
+    recall = np.concatenate(([0.0], recall, [1.0]))
+    precision = np.concatenate(([0.0], precision, [0.0]))
 
     # compute the precision envelope
-    for i in range(mpre.size - 1, 0, -1):
-        mpre[i - 1] = np.maximum(mpre[i - 1], mpre[i])
+    for i in range(precision.size - 1, 0, -1):
+        precision[i - 1] = np.maximum(precision[i - 1], precision[i])
 
     # to calculate area under PR curve, look for points
     # where X axis (recall) changes value
-    i = np.where(mrec[1:] != mrec[:-1])[0]
+    i = np.where(recall[1:] != recall[:-1])[0]
 
-    # and sum (\Delta recall) * prec
-    ap = np.sum((mrec[i + 1] - mrec[i]) * mpre[i + 1])
+    # and sum (\Delta recall) * precision
+    ap = np.sum((recall[i + 1] - recall[i]) * precision[i + 1])
     return ap
 
 
@@ -157,7 +157,7 @@ def bbox_iou(box1, box2, x1y1x2y2=True):
         b2_x1, b2_y1, b2_x2, b2_y2 = box2[:,
                                           0], box2[:, 1], box2[:, 2], box2[:, 3]
 
-    # get the corrdinates of the intersection rectangle
+    # get the coordinates of the intersection rectangle
     inter_rect_x1 = torch.max(b1_x1, b2_x1)
     inter_rect_y1 = torch.max(b1_y1, b2_y1)
     inter_rect_x2 = torch.min(b1_x2, b2_x2)
@@ -192,7 +192,7 @@ def bbox_iou_ios_cpu(box1, box2, x1y1x2y2=True):
         b2_x1, b2_y1, b2_x2, b2_y2 = box2[:,
                                           0], box2[:, 1], box2[:, 2], box2[:, 3]
 
-    # get the corrdinates of the intersection rectangle
+    # get the coordinates of the intersection rectangle
     inter_rect_x1 = np.maximum(b1_x1, b2_x1)
     inter_rect_y1 = np.maximum(b1_y1, b2_y1)
     inter_rect_x2 = np.minimum(b1_x2, b2_x2)
@@ -271,7 +271,7 @@ def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.4):
             invalid = large_overlap & label_match
             weights = detections[invalid, 4:5]
             # print(weights, large_overlap, 'weights')
-            # Merge overlapping bboxes by order of confidence
+            # Merge overlapping bboxs by order of confidence
             detections[0, :4] = (
                 weights * detections[invalid, :4]).sum(0) / weights.sum()
             # print('foo', detections[0, :4], weights.sum())
@@ -320,7 +320,7 @@ def non_max_suppression(prediction, conf_thres=0.5, nms_thres=0.4):
 #         b1_x1, b1_y1, b1_x2, b1_y2 = box1[:, 0], box1[:, 1], box1[:, 2], box1[:, 3]
 #         b2_x1, b2_y1, b2_x2, b2_y2 = box2[:, 0], box2[:, 1], box2[:, 2], box2[:, 3]
 
-#     # get the corrdinates of the intersection rectangle
+#     # get the coordinates of the intersection rectangle
 #     inter_rect_x1 = torch.max(b1_x1, b2_x1)
 #     inter_rect_y1 = torch.max(b1_y1, b2_y1)
 #     inter_rect_x2 = torch.min(b1_x2, b2_x2)

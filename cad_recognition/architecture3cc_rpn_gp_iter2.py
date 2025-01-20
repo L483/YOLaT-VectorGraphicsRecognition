@@ -369,7 +369,7 @@ class SparseCADGCN(torch.nn.Module):
             1), x1.unsqueeze(1), y1.unsqueeze(1)], dim=1)
 
         # torch.cuda.synchronize()
-        # print('predict overall:', time.time() - st_overal)
+        # print('predict overall:', time.time() - st_overall)
 
         return pred_cls, pred_bbox, None, slice_bbox, slice_image_bbox, None
 

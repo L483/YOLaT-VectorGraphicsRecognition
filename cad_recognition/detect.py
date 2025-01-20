@@ -145,7 +145,7 @@ if __name__ == "__main__":
                 torch.cuda.synchronize()
                 et = time.time()
                 mean_inference_time += et - st
-                # print('overal inference', et - st)
+                # print('overall inference', et - st)
 
                 pred_cls = out[0]
                 pred_coord = out[1]

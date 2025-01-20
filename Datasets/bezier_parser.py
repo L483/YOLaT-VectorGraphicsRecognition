@@ -62,7 +62,7 @@ class BezierParser:
         return bezier_path
 
     def line2BezierPath(self, shape):
-        # print(shape, 'fooo')
+        # print(shape, 'foo')
         bezier_path = Path()
         line = CubicBezier(
             complex(float(shape['x1']), float(shape['y1'])),
@@ -75,7 +75,7 @@ class BezierParser:
 
         # wsvg(line, filename = 'line_bezier.svg')
         # wsvg(Line(complex(float(shape['x1']), float(shape['y1'])), complex(float(shape['x2']), float(shape['y2']))), filename = 'line.svg')
-        # print('fooo')
+        # print('foo')
         return bezier_path
 
     def path2BezierPath(self, shape):

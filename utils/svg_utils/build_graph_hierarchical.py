@@ -42,7 +42,7 @@ def shape2Path(type_dict):
     return paths
 
 
-def getConnnectedComponent(node_dict):
+def getConnectedComponent(node_dict):
     edges = node_dict['edge']['shape']
     pos = node_dict['pos']['spatial']
     is_control = node_dict['attr']['is_control']
@@ -84,7 +84,7 @@ def mergeCC(node_dict):
     color = node_dict['attr']['color']
     is_control = node_dict['attr']['is_control']
 
-    cc = getConnnectedComponent(node_dict)
+    cc = getConnectedComponent(node_dict)
 
     paths = []
     bboxs = []
@@ -223,7 +223,7 @@ if __name__ == '__main__':
                     if ee[0] == ee[1]:
                         print(ee)
 
-            # getConnnectedComponent(node_dict)
+            # getConnectedComponent(node_dict)
             # super_pos, super_color, shape_shape_edges, super_shape_edges, super_super_edges, bbox_paths = getSuperNode(node_dict)
             shape_shape_edges, cross_shape_edges, shape_shape_edge_attr, cross_shape_edge_attr, bbox_paths = mergeCC(
                 node_dict)
@@ -268,7 +268,7 @@ if __name__ == '__main__':
 #     color = node_dict['attr']['color']
 #     is_control = node_dict['attr']['is_control']
 
-#     cc = getConnnectedComponent(node_dict)
+#     cc = getConnectedComponent(node_dict)
 
 #     paths = []
 #     bboxs = []

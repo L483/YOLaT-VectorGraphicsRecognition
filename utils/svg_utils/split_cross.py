@@ -83,14 +83,14 @@ def split_circle(points, circles):
         return np.abs(r2 - r * r) < th * th  # r * r * th * th
 
     arc = {'start_end': [], 'param': [], 'idx': []}
-    un_splited_idx = []
+    unsplitted_idx = []
     count = 0
     for circle_i, (cx, cy, r) in enumerate(zip(cxs, cys, rs)):
         on_curve = point_on_circle(points[:, 0], points[:, 1], cx, cy, r)
         # print(cx, cy, r, np.sum(on_curve))
         split_points = points[on_curve]
         if len(split_points) == 0:
-            un_splited_idx.append(circle_i)
+            unsplitted_idx.append(circle_i)
             continue
         # print(split_points.shape)
         split_points = merge_close_points(split_points)
@@ -172,7 +172,7 @@ def split_circle(points, circles):
                     large_arc = 1
                 else:
                     large_arc = 0
-            # print(start, end, start_vector, end_vector, a, a * end_vector[0], large_arc, 'foooo')
+            # print(start, end, start_vector, end_vector, a, a * end_vector[0], large_arc, 'foo')
             sweep = 1
             start_end = [x0, y0, x1, y1]
             param = [rx, ry, rot, large_arc, sweep]
@@ -194,7 +194,7 @@ def split_circle(points, circles):
         # arc['idx'].append(count)
         count += 1
 
-    circles = {'param': circles['param'][un_splited_idx]}
+    circles = {'param': circles['param'][unsplitted_idx]}
     for key in arc:
         arc[key] = np.array(arc[key])
 
@@ -377,13 +377,13 @@ def split_cross(shape_list):
         for key in type_dict[shape_type]:
             type_dict[shape_type][key] = np.array(type_dict[shape_type][key])
 
-    arc, unsplited_circle = split_circle(
+    arc, unsplitted_circle = split_circle(
         type_dict['line']['start_end'].reshape((-1, 2)), type_dict['circle'])
     # split_arc(type_dict['line']['start_end'].reshape((-1, 2)), type_dict['arc'])
     type_dict['line'] = split_line(
         type_dict['line']['start_end'].reshape((-1, 2)), type_dict['line'])
 
-    type_dict['circle'] = unsplited_circle
+    type_dict['circle'] = unsplitted_circle
     for key in type_dict['arc']:
         if len(arc[key]) == 0:
             continue

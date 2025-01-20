@@ -87,7 +87,7 @@ class OptInit:
 
         # test args
         parser.add_argument('--no_clutter', action='store_true',
-                            help='no clutter? set --no_clutter if ture.')
+                            help='no clutter? set --no_clutter if true.')
         parser.add_argument('--map_step', type=int,
                             default=10, help='threshold to build edge')
 

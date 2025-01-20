@@ -114,7 +114,7 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
         return len(self.svg_list)
 
     def get_anchor(self):
-        bboxes = [[] for i in range(len(list(self.class_dict.keys())))]
+        bboxs = [[] for i in range(len(list(self.class_dict.keys())))]
         for filepath in self.svg_list:
             p = SVGParser(filepath)
             width, height = p.get_image_size()
@@ -122,13 +122,13 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
             whs = gt_bbox[:, 2:] - gt_bbox[:, 0:2]
             for wh, l in zip(whs, gt_labels):
                 print(l)
-                bboxes[l].append(wh)
+                bboxs[l].append(wh)
 
-        bboxes = np.array(bboxes)
-        for wh in bboxes:
+        bboxs = np.array(bboxs)
+        for wh in bboxs:
             mean_box = np.median(wh, 0)
             print(mean_box, np.mean(wh, 0), np.max(wh, 0), np.min(wh, 0))
-        print(bboxes.shape)
+        print(bboxs.shape)
         raise SystemExit
 
     def _get_bbox(self, path, width, height):
@@ -209,7 +209,7 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
             gt_object.append(object_index[0])
 
         # assign label to control
-        control_neighboor = {}
+        control_neighbor = {}
         for e in graph_dict['edge']['control']:
             # print(is_control[e[0]], is_control[e[1]])
 
@@ -222,19 +222,19 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
             else:
                 continue
 
-            if c_node not in control_neighboor:
-                control_neighboor[c_node] = []
-            control_neighboor[c_node].append(node)
+            if c_node not in control_neighbor:
+                control_neighbor[c_node] = []
+            control_neighbor[c_node].append(node)
         # print(graph_dict['edge']['control'])
-        # print(control_neighboor)
+        # print(control_neighbor)
 
         # print(gt_bb, gt_cls)
         for node_idx, p in enumerate(pos):
             if is_control[node_idx]:
-                # print(control_neighboor[node_idx][0])
-                gt_bb[node_idx] = gt_bb[control_neighboor[node_idx][0]]
-                gt_cls[node_idx] = gt_cls[control_neighboor[node_idx][0]]
-                gt_object[node_idx] = gt_object[control_neighboor[node_idx][0]]
+                # print(control_neighbor[node_idx][0])
+                gt_bb[node_idx] = gt_bb[control_neighbor[node_idx][0]]
+                gt_cls[node_idx] = gt_cls[control_neighbor[node_idx][0]]
+                gt_object[node_idx] = gt_object[control_neighbor[node_idx][0]]
                 # raise SystemExit
         # print(gt_bb, gt_cls)
 
@@ -402,7 +402,7 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
             #########################
             x_values = sorted(pos_cluster[:, 0])
             y_values = sorted(pos_cluster[:, 1])
-            # print('fooo', x_values, y_values)
+            # print('foo', x_values, y_values)
 
             def merge_values(values):
                 new_values = [values[0]]
@@ -575,7 +575,7 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
                                         d00[y0 - 1][x1])
                                 else:
                                     dd = d00[y1][x1]
-                                # print(x0, y0, x1, y1, 'fooo')
+                                # print(x0, y0, x1, y1, 'foo')
                                 sub_c = [cluster[ii] for ii in dd]
                                 sub_clusters.append(tuple(sorted(sub_c)))
 
