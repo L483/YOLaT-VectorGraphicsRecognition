@@ -114,7 +114,7 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
         return len(self.svg_list)
 
     def get_anchor(self):
-        bboxs = [[] for i in range(len(list(self.class_dict.keys())))]
+        bboxs = [[] for _ in range(len(list(self.class_dict.keys())))]
         for filepath in self.svg_list:
             p = SVGParser(filepath)
             width, height = p.get_image_size()
@@ -425,8 +425,8 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
             use_bit = False
 
             # point_exist = np.ones((len(y_values), len(x_values))).astype(np.int8) * (-1)
-            point_exist = [[[] for j in range(len(x_values))]
-                           for i in range(len(y_values))]
+            point_exist = [[[] for _ in range(len(x_values))]
+                           for _ in range(len(y_values))]
             # print(x_values, y_values)
 
             pos_idx = range(pos_cluster.shape[0])
@@ -441,8 +441,8 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
             def set_bit(value, bit):
                 return value | (1 << bit)
 
-            d00 = [[None for i in range(len(x_values))]
-                   for j in range(len(y_values))]
+            d00 = [[None for _ in range(len(x_values))]
+                   for _ in range(len(y_values))]
             d00[0][0] = point_exist[0][0]
 
             for i in range(1, len(x_values)):
@@ -451,8 +451,8 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
             for i in range(1, len(y_values)):
                 d00[i][0] = d00[i - 1][0] + point_exist[i][0]
 
-            d_row = [[None for i in range(len(x_values))]
-                     for j in range(len(y_values))]
+            d_row = [[None for _ in range(len(x_values))]
+                     for _ in range(len(y_values))]
             for i in range(0, len(x_values)):
                 d_row[0][i] = d00[0][i]
 
@@ -584,8 +584,8 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
             #########################
             def get_adj(edge):
                 # adj = -np.ones((pos.shape[0], pos.shape[0])).astype(np.int)
-                adj = [[[] for j in range(pos.shape[0])]
-                       for j in range(pos.shape[0])]
+                adj = [[[] for _ in range(pos.shape[0])]
+                       for _ in range(pos.shape[0])]
                 for i, e in enumerate(edge):
                     # adj[e[0], e[1]] = i
                     # adj[e[1], e[0]] = i
@@ -676,7 +676,7 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
                 n_angle_less90 = 0
                 n_angle_90 = 0
                 n_angle_more90 = 0
-                adj = [set() for i in range(pos.shape[0])]
+                adj = [set() for _ in range(pos.shape[0])]
 
                 for e in edge_bbox:
                     adj[e[0] - offset].add(e[1] - offset)
@@ -828,10 +828,10 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
         return pos, is_super, is_control, edge, edge_super, e_attr, e_attr_super, labels, bbox_idx, new_bbox, bbox_targets, stat_feats, has_obj, roots
 
     def mixup(self, cc, pos, edge, edge_super, e_attr, e_attr_super, is_super):
-        cc_idx = [0 for i in range(len(pos))]
-        cc_edge = [[] for i in range(len(cc))]
-        cc_edge_super = [[] for i in range(len(cc))]
-        cc_e_attr = [[] for i in range(len(cc))]
+        cc_idx = [0 for _ in range(len(pos))]
+        cc_edge = [[] for _ in range(len(cc))]
+        cc_edge_super = [[] for _ in range(len(cc))]
+        cc_e_attr = [[] for _ in range(len(cc))]
 
         for cluster_i, cluster in enumerate(cc):
             for idx in cluster:
@@ -843,7 +843,7 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
         for e in edge_super:
             cc_edge_super[cc_idx[e[0]]].append(e)
 
-        grouped_idx = [[] for i in range(len(cc))]
+        grouped_idx = [[] for _ in range(len(cc))]
         offset = pos.shape[0]
 
         new_cc = []
@@ -1023,17 +1023,17 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
 
         if False:
             cc_idx = bbox_idx
-            cc = [[] for i in range(len(bbox))]
+            cc = [[] for _ in range(len(bbox))]
             for p_i, b_i in enumerate(bbox_idx):
                 cc[b_i].append(p_i)
 
-            cc_edge = [[] for i in range(len(bbox))]
+            cc_edge = [[] for _ in range(len(bbox))]
             for e in edge:
                 # print(cc_idx[e[0]], cc_idx[e[1]], a)
                 # print(e, a)
                 cc_edge[cc_idx[e[0]]].append(e)
 
-            cc_edge_super = [[] for i in range(len(bbox))]
+            cc_edge_super = [[] for _ in range(len(bbox))]
             for e in edge_super:
                 # print(cc_idx[e[0]], cc_idx[e[1]], a)
                 # print(e, a)

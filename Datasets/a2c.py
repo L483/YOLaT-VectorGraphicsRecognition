@@ -163,7 +163,7 @@ def a2c(x1, y1, x2, y2, fa, fs, rx, ry, phi):
     segments = int(max(math.ceil(abs(delta_theta) / (TAU / 4)), 1))
     delta_theta /= segments
 
-    for i in range(0, segments):
+    for _ in range(0, segments):
         result.append(approximate_unit_arc(theta1, delta_theta))
 
         theta1 += delta_theta

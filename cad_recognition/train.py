@@ -40,7 +40,8 @@ def non_max_suppression(prediction, conf_thres=0.25, iou_thres=0.45, classes=Non
 
     # Settings
     # (pixels) minimum and maximum box width and height
-    min_wh, max_wh = 2, 4096
+    # min_wh, max_wh = 2, 4096
+    _, max_wh = 2, 4096
     max_det = 300  # maximum number of detections per image
     max_nms = 30000  # maximum number of boxes into torchvision.ops.nms()
     time_limit = 10.0  # seconds to quit after
@@ -334,7 +335,7 @@ def test(model, test_loader, criterion, opt):
     opt.test_values.reset()
     model.eval()
     with torch.no_grad():
-        sample_metrics = [[] for i in range(10)]
+        sample_metrics = [[] for _ in range(10)]
         labels = []
         test_loss = {}
 
@@ -473,7 +474,8 @@ def test(model, test_loader, criterion, opt):
 
             true_positives, pred_scores, pred_labels = [
                 np.concatenate(x, 0) for x in list(zip(*sample_metrics[i]))]
-            precision, recall, AP, f1, ap_class = ap_per_class(
+            # precision, recall, AP, f1, ap_class = ap_per_class(
+            _, _, AP, _, _ = ap_per_class(
                 true_positives, pred_scores, pred_labels, labels)
             # print(AP)
             # test_value = test_metric(out.max(dim=1)[1], gt, opt.n_classes)

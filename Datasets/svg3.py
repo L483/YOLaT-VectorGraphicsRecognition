@@ -68,7 +68,7 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
         return len(self.svg_list)
 
     def get_anchor(self):
-        bboxs = [[] for i in range(len(list(self.class_dict.keys())))]
+        bboxs = [[] for _ in range(len(list(self.class_dict.keys())))]
         for filepath in self.svg_list:
             p = SVGParser(filepath)
             width, height = p.get_image_size()

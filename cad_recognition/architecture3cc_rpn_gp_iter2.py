@@ -31,7 +31,7 @@ class Backbone(torch.nn.Module):
         self.head = GraphConv(opt.in_channels, channels, conv, act, norm, bias)
 
         self.backbone = MultiSeq(*[ResBlock(channels, conv, act, norm, bias)
-                                   for i in range(self.n_blocks-1)])
+                                   for _ in range(self.n_blocks-1)])
         fusion_dims = int(channels + c_growth * (self.n_blocks_out - 1))
 
         self.fusion_block = MLP([fusion_dims, 1024], act, norm, bias)
