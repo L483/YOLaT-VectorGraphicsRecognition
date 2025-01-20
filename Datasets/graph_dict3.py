@@ -155,91 +155,91 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
 
         return np.array(bbox), np.array(labels)
 
-    def refine_gt(self, graph_dict, bbox):
-        pos = graph_dict['pos']['spatial']
-        is_control = graph_dict['attr']['is_control']
-        # print(pos.shape, bbox.shape, labels.shape)
-        # print(np.max(pos[:, 0]), np.max(pos[:, 1]))
+    # def refine_gt(self, graph_dict, bbox):
+    #     pos = graph_dict['pos']['spatial']
+    #     is_control = graph_dict['attr']['is_control']
+    #     # print(pos.shape, bbox.shape, labels.shape)
+    #     # print(np.max(pos[:, 0]), np.max(pos[:, 1]))
 
-        th = 1e-3
-        gt_bb = []
-        gt_cls = []
-        gt_object = []
+    #     th = 1e-3
+    #     gt_bb = []
+    #     gt_cls = []
+    #     gt_object = []
 
-        for node_idx, p in enumerate(pos):
-            if is_control[node_idx]:
-                gt_bb.append((0, 0, 0, 0))
-                gt_cls.append((0))
-                gt_object.append((0))
-                continue
+    #     for node_idx, p in enumerate(pos):
+    #         if is_control[node_idx]:
+    #             gt_bb.append((0, 0, 0, 0))
+    #             gt_cls.append((0))
+    #             gt_object.append((0))
+    #             continue
 
-            diff_0 = p[None, :] - bbox[:, 0:2]
-            diff_1 = p[None, :] - bbox[:, 2:]
-            in_object = (diff_0[:, 0] >= -th) & (diff_0[:, 1]
-                                                 >= -th) & (diff_1[:, 0] <= th) & (diff_1[:, 1] <= th)
+    #         diff_0 = p[None, :] - bbox[:, 0:2]
+    #         diff_1 = p[None, :] - bbox[:, 2:]
+    #         in_object = (diff_0[:, 0] >= -th) & (diff_0[:, 1]
+    #                                              >= -th) & (diff_1[:, 0] <= th) & (diff_1[:, 1] <= th)
 
-            object_index = np.nonzero(in_object)[0]
-            if len(object_index) > 1:
-                # print(object_index)
-                # print('node', p[0] * width, p[1] * height, 'is inside more than one object')
-                candidates = bbox[object_index]
-                s = euclidean_distances(p[None, :], candidates[:, 0:2])[0]
-                # print(np.argsort(s))
-                object_index = object_index[np.argsort(s)]
-                # print(candidates, s, object_index)
-            elif len(object_index) == 0:
-                # print(diff_0 * [width, height], diff_1* [width, height])
-                # print(object_index)
-                # print('node', p[0] * width, p[1] *
-                #       height, 'outside all object')
-                print('node', p[0], p[1], 'outside all object')
-                # for i, line in enumerate(bbox[:, 0:2] * [width, height]):
-                #    print(i, line)
-                raise SystemExit
-            cls = labels[object_index[0]]
-            bb = bbox[object_index[0]]
-            '''
-            h = bb[3] - bb[1]
-            w = bb[2] - bb[0]
-            offset_x = bb[0] - p[0]
-            offset_y = bb[1] - p[1]
-            gt_bb.append((offset_x, offset_y, w, h))
-            '''
-            gt_bb.append(bb)
-            gt_cls.append(cls)
-            gt_object.append(object_index[0])
+    #         object_index = np.nonzero(in_object)[0]
+    #         if len(object_index) > 1:
+    #             # print(object_index)
+    #             # print('node', p[0] * width, p[1] * height, 'is inside more than one object')
+    #             candidates = bbox[object_index]
+    #             s = euclidean_distances(p[None, :], candidates[:, 0:2])[0]
+    #             # print(np.argsort(s))
+    #             object_index = object_index[np.argsort(s)]
+    #             # print(candidates, s, object_index)
+    #         elif len(object_index) == 0:
+    #             # print(diff_0 * [width, height], diff_1* [width, height])
+    #             # print(object_index)
+    #             # print('node', p[0] * width, p[1] *
+    #             #       height, 'outside all object')
+    #             print('node', p[0], p[1], 'outside all object')
+    #             # for i, line in enumerate(bbox[:, 0:2] * [width, height]):
+    #             #    print(i, line)
+    #             raise SystemExit
+    #         cls = labels[object_index[0]]
+    #         bb = bbox[object_index[0]]
+    #         '''
+    #         h = bb[3] - bb[1]
+    #         w = bb[2] - bb[0]
+    #         offset_x = bb[0] - p[0]
+    #         offset_y = bb[1] - p[1]
+    #         gt_bb.append((offset_x, offset_y, w, h))
+    #         '''
+    #         gt_bb.append(bb)
+    #         gt_cls.append(cls)
+    #         gt_object.append(object_index[0])
 
-        # assign label to control
-        control_neighbor = {}
-        for e in graph_dict['edge']['control']:
-            # print(is_control[e[0]], is_control[e[1]])
+    #     # assign label to control
+    #     control_neighbor = {}
+    #     for e in graph_dict['edge']['control']:
+    #         # print(is_control[e[0]], is_control[e[1]])
 
-            if not is_control[e[0]] and is_control[e[1]]:
-                c_node = e[1]
-                node = e[0]
-            elif not is_control[e[1]] and is_control[e[0]]:
-                c_node = e[0]
-                node = e[1]
-            else:
-                continue
+    #         if not is_control[e[0]] and is_control[e[1]]:
+    #             c_node = e[1]
+    #             node = e[0]
+    #         elif not is_control[e[1]] and is_control[e[0]]:
+    #             c_node = e[0]
+    #             node = e[1]
+    #         else:
+    #             continue
 
-            if c_node not in control_neighbor:
-                control_neighbor[c_node] = []
-            control_neighbor[c_node].append(node)
-        # print(graph_dict['edge']['control'])
-        # print(control_neighbor)
+    #         if c_node not in control_neighbor:
+    #             control_neighbor[c_node] = []
+    #         control_neighbor[c_node].append(node)
+    #     # print(graph_dict['edge']['control'])
+    #     # print(control_neighbor)
 
-        # print(gt_bb, gt_cls)
-        for node_idx, p in enumerate(pos):
-            if is_control[node_idx]:
-                # print(control_neighbor[node_idx][0])
-                gt_bb[node_idx] = gt_bb[control_neighbor[node_idx][0]]
-                gt_cls[node_idx] = gt_cls[control_neighbor[node_idx][0]]
-                gt_object[node_idx] = gt_object[control_neighbor[node_idx][0]]
-                # raise SystemExit
-        # print(gt_bb, gt_cls)
+    #     # print(gt_bb, gt_cls)
+    #     for node_idx, p in enumerate(pos):
+    #         if is_control[node_idx]:
+    #             # print(control_neighbor[node_idx][0])
+    #             gt_bb[node_idx] = gt_bb[control_neighbor[node_idx][0]]
+    #             gt_cls[node_idx] = gt_cls[control_neighbor[node_idx][0]]
+    #             gt_object[node_idx] = gt_object[control_neighbor[node_idx][0]]
+    #             # raise SystemExit
+    #     # print(gt_bb, gt_cls)
 
-        return np.array(gt_bb), np.array(gt_cls), np.array(gt_object)
+    #     return np.array(gt_bb), np.array(gt_cls), np.array(gt_object)
 
     def __transform__(self, pos, scale, angle, translate):
         scale_m = np.eye(2)
