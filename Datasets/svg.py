@@ -57,7 +57,7 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
             print(filepath)
             p = SVGParser(filepath)
             width, height = p.get_image_size()
-            #graph_dict = self.graph_builder.buildGraph(p.get_all_shape())
+            #graph_dict = self.graph_builder.build_graph(p.get_all_shape())
 
             gt_bbox, gt_labels = self._get_bbox(filepath, width, height)
             self.n_objects += gt_bbox.shape[0]
@@ -260,7 +260,7 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
 
         p = SVGParser(filepath)
         width, height = p.get_image_size()
-        graph_dict = self.graph_builder.buildGraph(p.get_all_shape())
+        graph_dict = self.graph_builder.build_graph(p.get_all_shape())
 
         gt_bbox, gt_labels = self._get_bbox(filepath, width, height)
         bbox, labels, gt_object = self.gen_y(
@@ -281,7 +281,7 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
 
         edge = graph_dict['edge']['shape']
         edge_control = graph_dict['edge']['control']
-        edge_pos, e_weight_pos = self.graph_builder.buildPosEdge(
+        edge_pos, e_weight_pos = self.graph_builder.build_pos_edge(
             pos, is_control, th=self.pos_edge_th)
         e_attr = graph_dict['edge_attr']['shape']
 
@@ -364,7 +364,7 @@ if __name__ == '__main__':
         print(line)
         # line = '/home/xinyangjiang/Datasets/SESYD/FloorPlans/floorplans16-01/file_56.svg'
         p = SVGParser(line)
-        builder.buildGraph(p.get_all_shape())
+        builder.build_graph(p.get_all_shape())
 
     # train_dataset = SESYDFloorPlan(opt.data_dir, pre_transform=T.NormalizeScale())
     # train_loader = DataLoader(train_dataset, batch_size=opt.batch_size, shuffle=True, num_workers=4)

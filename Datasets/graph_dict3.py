@@ -22,7 +22,7 @@ from utils.det_util import bbox_iou_ios_cpu, intersect_bb_idx
 # from a2c import a2c
 
 
-class idxTree:
+class IdxTree:
     def __init__(self):
         self.children = []
         self.value = {}
@@ -593,9 +593,9 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
                     adj[e[1]][e[0]].append(i)
                 return adj
 
-            A = get_adj(edge)
-            A_super = get_adj(edge_super)
-            # print(A)
+            a = get_adj(edge)
+            a_super = get_adj(edge_super)
+            # print(a)
 
             bbox_cc = np.array([min_x, min_y, max_x, max_y])[None, :]
             gt_bbox_idx_valid = intersect_bb_idx(bbox_cc, gt_bbox)
@@ -615,9 +615,9 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
                 edge_idxs = []
                 for i in range(len(idxs)):
                     for j in range(i + 1, len(idxs)):
-                        # if A[idxs[i], idxs[j]] >= 0:
-                        # edge_idxs.append(A[idxs[i], idxs[j]])
-                        edge_idxs += A[idxs[i]][idxs[j]]
+                        # if a[idxs[i], idxs[j]] >= 0:
+                        # edge_idxs.append(a[idxs[i], idxs[j]])
+                        edge_idxs += a[idxs[i]][idxs[j]]
 
                 edge_bbox = edge[edge_idxs]
                 if edge_bbox.shape[0] == 0:
@@ -630,9 +630,9 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
                 edge_idxs = []
                 for i in range(len(idxs)):
                     for j in range(i + 1, len(idxs)):
-                        # if A_super[idxs[i], idxs[j]] >= 0:
-                        # edge_idxs.append(A_super[idxs[i], idxs[j]])
-                        edge_idxs += A_super[idxs[i]][idxs[j]]
+                        # if a_super[idxs[i], idxs[j]] >= 0:
+                        # edge_idxs.append(a_super[idxs[i], idxs[j]])
+                        edge_idxs += a_super[idxs[i]][idxs[j]]
 
                 edge_super_bbox = edge_super[edge_idxs]
                 edge_super_bbox = np.array(
@@ -779,7 +779,7 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
             # print(area)
             max_idx = np.argmax(area)
             # print('root idx', max_idx)
-            root = idxTree()
+            root = IdxTree()
             root.value['idx_pos'] = (
                 subcluster_slice_pos[idx_offset + max_idx], subcluster_slice_pos[idx_offset + max_idx + 1])
             root.value['idx_edge'] = (
@@ -794,7 +794,7 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
             for i in range(sub_bbox.shape[0]):
                 if i == max_idx:
                     continue
-                p = idxTree()
+                p = IdxTree()
                 p.value['idx_pos'] = (
                     subcluster_slice_pos[idx_offset + i], subcluster_slice_pos[idx_offset + i + 1])
                 p.value['idx_edge'] = (
@@ -1152,7 +1152,7 @@ if __name__ == '__main__':
         print(line)
         # line = '/home/xinyangjiang/Datasets/SESYD/FloorPlans/floorplans16-01/file_56.svg'
         p = SVGParser(line)
-        builder.buildGraph(p.get_all_shape())
+        builder.build_graph(p.get_all_shape())
 
     # train_dataset = SESYDFloorPlan(opt.data_dir, pre_transform=T.NormalizeScale())
     # train_loader = DataLoader(train_dataset, batch_size=opt.batch_size, shuffle=True, num_workers=4)

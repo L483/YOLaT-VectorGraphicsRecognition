@@ -171,11 +171,11 @@ def a2c(x1, y1, x2, y2, fa, fs, rx, ry, phi):
     # We have a bezier approximation of a unit circle,
     # now need to transform back to the original ellipse
     #
-    return getMappedList(result, rx, ry, sin_phi, cos_phi, cc)
+    return get_mapped_list(result, rx, ry, sin_phi, cos_phi, cc)
 
 
-def getMappedList(result, rx, ry, sin_phi, cos_phi, cc):
-    mappedList = []
+def get_mapped_list(result, rx, ry, sin_phi, cos_phi, cc):
+    mappe_list = []
     for elem in result:
         curve = []
         for i in range(0, len(elem), 2):
@@ -194,5 +194,5 @@ def getMappedList(result, rx, ry, sin_phi, cos_phi, cc):
             elem[i + 0] = xp + cc[0]
             elem[i + 1] = yp + cc[1]
             curve.append(complex(elem[i + 0], elem[i + 1]))
-        mappedList.append(curve)
-    return mappedList
+        mappe_list.append(curve)
+    return mappe_list

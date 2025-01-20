@@ -12,13 +12,13 @@ sys.path.insert(0, os.path.join(
     os.path.dirname(os.path.abspath(__file__)), '../../'))
 
 
-def shape2Path(type_dict):
+def shape_2_path(type_dict):
     parser = BezierParser()
     paths = Path()
     if 'line' in type_dict:
         for start_end in type_dict['line']['start_end']:
             x0, y0, x1, y1 = start_end
-            path = parser.line2BezierPath(
+            path = parser.line_2_bezier_path(
                 {'x1': x0, 'y1': y0, 'x2': x1, 'y2': y1})
             paths += path
     if 'arc' in type_dict:
@@ -37,13 +37,13 @@ def shape2Path(type_dict):
     if 'circle' in type_dict:
         for param in type_dict['circle']['param']:
             cx, cy, r = param
-            path = parser.circle2BezierPath({'cx': cx, 'cy': cy, 'r': r})
+            path = parser.circle_2_bezier_path({'cx': cx, 'cy': cy, 'r': r})
             paths += path
 
     return paths
 
 
-def getConnectedComponent(node_dict):
+def get_connected_component(node_dict):
     edges = node_dict['edge']['shape']
     pos = node_dict['pos']['spatial']
     is_control = node_dict['attr']['is_control']
@@ -79,7 +79,7 @@ def getConnectedComponent(node_dict):
     return clusters
 
 
-def mergeCluster(cc, bboxs, ratio=None, expand_length=None):
+def merge_cluster(cc, bboxs, ratio=None, expand_length=None):
     # default: ratio:0.5, expand_length:0.06
     from collections import deque
     from pathlib import Path
@@ -160,13 +160,13 @@ def mergeCluster(cc, bboxs, ratio=None, expand_length=None):
     return new_cc, new_bboxs
 
 
-def mergeCC(node_dict, svg_path, width, height):
+def merge_cc(node_dict, svg_path, width, height):
     edges = node_dict['edge']['shape']
     pos = node_dict['pos']['spatial']
     color = node_dict['attr']['color']
     is_control = node_dict['attr']['is_control']
 
-    cc = getConnectedComponent(node_dict)
+    cc = get_connected_component(node_dict)
 
     bboxs = []
     for i, cluster in enumerate(cc):
@@ -177,10 +177,10 @@ def mergeCC(node_dict, svg_path, width, height):
         min_y = pos_cluster[:, 1].min(0)
         bboxs.append((min_x, min_y, max_x, max_y))
 
-    # cc, bboxs = mergeCluster(cc, bboxs, ratio=0.5, expand_length=None)
+    # cc, bboxs = merge_cluster(cc, bboxs, ratio=0.5, expand_length=None)
     # hardcode 70 for expand_length
-    # cc, bboxs = mergeCluster(cc, bboxs, ratio=None, expand_length=(70 / width, 70 / height))
-    cc, bboxs = mergeCluster(cc, bboxs, ratio=None,
+    # cc, bboxs = merge_cluster(cc, bboxs, ratio=None, expand_length=(70 / width, 70 / height))
+    cc, bboxs = merge_cluster(cc, bboxs, ratio=None,
                              expand_length=(40 / width, 40 / height))
 
     paths = []
@@ -323,17 +323,17 @@ if __name__ == '__main__':
             # split_cross splits the segments into multiple small segments if there is a cross-point
             type_dict = split_cross(p.get_all_shape())
             width, height = p.get_image_size()
-            paths = shape2Path(type_dict)
+            paths = shape_2_path(type_dict)
             # {'pos': {'spatial': the positions of nodes}, {'attr': {'color': color of every node, 'stroke_width': stroke width, 'is_control': if the node is control node}}, {'edge': {'control': control edge, 'spatial': spatial edge}}, 'edge_attr': N * 6}
             # edge is between any two non-control nodes in a bezier curve
             # the intersection nodes are added as nodes
             # What does the N in edge_attr mean?
-            node_dict = graph_builder.bezierPath2Graph(paths,
-                                                       {'width': width,
-                                                        'height': height,
-                                                        'stroke': 'black',
-                                                        'stroke-width': 6}
-                                                       )
+            node_dict = graph_builder.bezier_path_2_graph(paths,
+                                                          {'width': width,
+                                                           'height': height,
+                                                           'stroke': 'black',
+                                                           'stroke-width': 6}
+                                                          )
 
             # print(node_dict['edge']['shape'])
             for key in node_dict:
@@ -343,17 +343,17 @@ if __name__ == '__main__':
                         node_dict[key][k] = node_dict[key][k][:, None]
                     # print(key, k, node_dict[key][k].shape)
 
-            node_dict = graph_builder.mergeNode(node_dict)
+            node_dict = graph_builder.merge_node(node_dict)
             if True:
                 e = node_dict['edge']['shape']
                 for ee in e:
                     if ee[0] == ee[1]:
                         print(ee)
 
-            # getConnectedComponent(node_dict)
+            # get_connected_component(node_dict)
             # super_pos, super_color, shape_shape_edges, super_shape_edges, super_super_edges, bbox_paths = getSuperNode(node_dict)
 
-            shape_shape_edges, cross_shape_edges, shape_shape_edge_attr, cross_shape_edge_attr, bbox_paths, cc = mergeCC(
+            shape_shape_edges, cross_shape_edges, shape_shape_edge_attr, cross_shape_edge_attr, bbox_paths, cc = merge_cc(
                 node_dict, filepath, width, height)
 
             bbox_paths.append(paths)

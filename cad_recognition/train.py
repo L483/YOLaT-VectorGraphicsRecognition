@@ -465,7 +465,7 @@ def test(model, test_loader, criterion, opt):
             # if i_batch == 0: break
 
         iou_ths = np.linspace(0.5, 0.95, opt.map_step)
-        AP_total = 0
+        ap_total = 0
         output_str = ''
         for i in range(opt.map_step):
             # no detections over whole validation set.
@@ -486,12 +486,12 @@ def test(model, test_loader, criterion, opt):
             output_str += 'Top1 Acc@{0:.2f}:{1:.4f}\t'.format(
                 iou_ths[i], n_true * 1.0 / n_total)
             output_str += '\n'
-            AP_total += np.mean(AP)
+            ap_total += np.mean(AP)
 
         overall_time /= len(test_loader.dataset)
 
         output_str += 'Epoch: [{0}]\t Iter: [{1}]\t''MAP@ALL: {2:.4f}\t inference_Time: {3:.4f}   '.format(
-            opt.epoch, opt.iter,  AP_total / 10, overall_time * 1000)
+            opt.epoch, opt.iter,  ap_total / 10, overall_time * 1000)
 
         for key in test_loss:
             output_str += '{0}:{1:.4f}\t'.format(key, np.mean(test_loss[key]))

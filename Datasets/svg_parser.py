@@ -47,7 +47,7 @@ class SVGGraphBuilderBezier2:
         # print(ret)
         return ret
 
-    def bezierPath2Graph(self, path, attrs):
+    def bezier_path_2_graph(self, path, attrs):
         edges = []
         edge_attrs = []
         edges_control = []
@@ -59,7 +59,7 @@ class SVGGraphBuilderBezier2:
         width = float(attrs['width'])
         height = float(attrs['height'])
 
-        def _buildNode(point):
+        def _build_node(point):
             pos = [point.real / width, point.imag / height]
 
             if attrs['stroke'] in self.colors:
@@ -74,27 +74,27 @@ class SVGGraphBuilderBezier2:
 
         idx = 0
         for element in path:
-            pos_start, color, stroke_width = _buildNode(element.start)
+            pos_start, color, stroke_width = _build_node(element.start)
             poss.append(pos_start)
             colors.append(color)
             stroke_widths.append(stroke_width)
             is_control.append(0)
 
-            pos_c0, color, stroke_width = _buildNode(element.control1)
+            pos_c0, color, stroke_width = _build_node(element.control1)
             idx_control1 = idx + 1
             poss.append(pos_c0)
             colors.append(color)
             stroke_widths.append(stroke_width)
             is_control.append(1)
 
-            pos_c1, color, stroke_width = _buildNode(element.control2)
+            pos_c1, color, stroke_width = _build_node(element.control2)
             idx_control2 = idx + 2
             poss.append(pos_c1)
             colors.append(color)
             stroke_widths.append(stroke_width)
             is_control.append(1)
 
-            pos_end, color, stroke_width = _buildNode(element.end)
+            pos_end, color, stroke_width = _build_node(element.end)
             idx_end = idx + 3
             poss.append(pos_end)
             colors.append(color)
@@ -143,7 +143,7 @@ class SVGGraphBuilderBezier2:
                 'edge_attr': {'shape': edge_attrs}
                 }
 
-    def mergeNode(self, graph_dict):
+    def merge_node(self, graph_dict):
         pos = graph_dict['pos']['spatial']
         sim_pos = euclidean_distances(pos, pos)
         # np.set_printoptions(threshold=np.inf)
@@ -273,7 +273,7 @@ class SVGGraphBuilderBezier2:
 
         return merged_graph_dict
 
-    def buildPosEdge(self, pos, is_control, th=5e-3):
+    def build_pos_edge(self, pos, is_control, th=5e-3):
         distance = euclidean_distances(pos, pos)
         s = (distance < th)
 
@@ -294,12 +294,12 @@ class SVGGraphBuilderBezier2:
 
         return np.array(ret), np.array(weight)
 
-    def buildGraph(self, shape_list):
+    def build_graph(self, shape_list):
         graph_dict = {}
         idx_offset = 0
         for shape in shape_list:
-            bezier_path = self.bezier_parser.shape2BezierPath(shape)
-            node_dict = self.bezierPath2Graph(bezier_path, shape)
+            bezier_path = self.bezier_parser.shape_2_bezier_path(shape)
+            node_dict = self.bezier_path_2_graph(bezier_path, shape)
 
             # if len(node_dict['pos']['spatial']) <= np.max(node_dict['edge']['shape']) or len(node_dict['pos']['spatial']) <= np.max(node_dict['edge']['control']):
             #    print(shape['shape_name'], node_dict)
@@ -325,7 +325,7 @@ class SVGGraphBuilderBezier2:
                     graph_dict[key][k] = graph_dict[key][k][:, None]
                 # print(key, k,  graph_dict[key][k].shape)
 
-        graph_dict = self.mergeNode(graph_dict)
+        graph_dict = self.merge_node(graph_dict)
 
         return graph_dict
 
@@ -340,7 +340,7 @@ class SVGGraphBuilderShape:
             'blue': [0.0, 0.0, 1.0]
         }
 
-    def buildPosEdge(self, pos, th=5e-3):
+    def build_pos_edge(self, pos, th=5e-3):
         # d00 = euclidean_distances(pos[:, 0:2], pos[:, 0:2])
         # d01 = euclidean_distances(pos[:, 0:2], pos[:, 2:])
         # d10 = euclidean_distances(pos[:, 2:], pos[:, 0:2])
@@ -369,7 +369,7 @@ class SVGGraphBuilderShape:
 
         return np.array(ret), np.array(weight)
 
-    def buildGraph(self, shape_list):
+    def build_graph(self, shape_list):
         graph_dict = {}
         idx_offset = 0
 
@@ -442,14 +442,14 @@ class SVGGraphBuilderShape:
                 print(shape)
                 raise SystemExit
 
-        # graph_dict = self.mergeNode(graph_dict)
+        # graph_dict = self.merge_node(graph_dict)
         graph_dict = {}
         graph_dict['f'] = np.concatenate(feats, axis=0)
         graph_dict['pos'] = np.array(poses)
         # print(graph_dict['f'].shape)
         # print(graph_dict['pos'].shape)
 
-        edge, edge_weight = self.buildPosEdge(graph_dict['pos'])
+        edge, edge_weight = self.build_pos_edge(graph_dict['pos'])
         # print(edge, edge_weight)
         graph_dict['edge'] = edge
         graph_dict['edge_weight'] = edge_weight
@@ -494,7 +494,7 @@ class SVGGraphBuilderBezier:
         # print(ret)
         return ret
 
-    def bezierPath2Graph(self, path, attrs):
+    def bezier_path_2_graph(self, path, attrs):
         edges = []
         edge_attrs = []
         edges_control = []
@@ -506,7 +506,7 @@ class SVGGraphBuilderBezier:
         width = float(attrs['width'])
         height = float(attrs['height'])
 
-        def _buildNode(point):
+        def _build_node(point):
             pos = [point.real / width, point.imag / height]
 
             if attrs['stroke'] in self.colors:
@@ -521,27 +521,27 @@ class SVGGraphBuilderBezier:
 
         idx = 0
         for element in path:
-            pos_start, color, stroke_width = _buildNode(element.start)
+            pos_start, color, stroke_width = _build_node(element.start)
             poss.append(pos_start)
             colors.append(color)
             stroke_widths.append(stroke_width)
             is_control.append(0)
 
-            pos_c0, color, stroke_width = _buildNode(element.control1)
+            pos_c0, color, stroke_width = _build_node(element.control1)
             idx_control1 = idx + 1
             poss.append(pos_c0)
             colors.append(color)
             stroke_widths.append(stroke_width)
             is_control.append(1)
 
-            pos_c1, color, stroke_width = _buildNode(element.control2)
+            pos_c1, color, stroke_width = _build_node(element.control2)
             idx_control2 = idx + 2
             poss.append(pos_c1)
             colors.append(color)
             stroke_widths.append(stroke_width)
             is_control.append(1)
 
-            pos_end, color, stroke_width = _buildNode(element.end)
+            pos_end, color, stroke_width = _build_node(element.end)
             idx_end = idx + 3
             poss.append(pos_end)
             colors.append(color)
@@ -572,7 +572,7 @@ class SVGGraphBuilderBezier:
                 'edge_attr': {'shape': edge_attrs}
                 }
 
-    def mergeNode(self, graph_dict):
+    def merge_node(self, graph_dict):
         pos = graph_dict['pos']['spatial']
         sim_pos = euclidean_distances(pos, pos)
         # print('euc dist', sim_pos)
@@ -701,7 +701,7 @@ class SVGGraphBuilderBezier:
 
         return merged_graph_dict
 
-    def buildPosEdge(self, pos, is_control, th=5e-3):
+    def build_pos_edge(self, pos, is_control, th=5e-3):
         distance = euclidean_distances(pos, pos)
         s = (distance < th)
 
@@ -722,12 +722,12 @@ class SVGGraphBuilderBezier:
 
         return np.array(ret), np.array(weight)
 
-    def buildGraph(self, shape_list):
+    def build_graph(self, shape_list):
         graph_dict = {}
         idx_offset = 0
         for shape in shape_list:
-            bezier_path = self.bezier_parser.shape2BezierPath(shape)
-            node_dict = self.bezierPath2Graph(bezier_path, shape)
+            bezier_path = self.bezier_parser.shape_2_bezier_path(shape)
+            node_dict = self.bezier_path_2_graph(bezier_path, shape)
 
             # if len(node_dict['pos']['spatial']) <= np.max(node_dict['edge']['shape']) or len(node_dict['pos']['spatial']) <= np.max(node_dict['edge']['control']):
             #    print(shape['shape_name'], node_dict)
@@ -753,7 +753,7 @@ class SVGGraphBuilderBezier:
                     graph_dict[key][k] = graph_dict[key][k][:, None]
                 # print(key, k,  graph_dict[key][k].shape)
 
-        graph_dict = self.mergeNode(graph_dict)
+        graph_dict = self.merge_node(graph_dict)
 
         return graph_dict
 
