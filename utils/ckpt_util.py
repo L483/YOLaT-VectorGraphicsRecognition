@@ -73,21 +73,21 @@ def load_pretrained_models(model, pretrained_model, phase, ismax=True):
 
 def load_pretrained_optimizer(pretrained_model, optimizer, scheduler, lr, use_ckpt_lr=True):
     if pretrained_model and os.path.isfile(pretrained_model):
-            checkpoint = torch.load(pretrained_model)
-            if 'optimizer_state_dict' in checkpoint.keys():
-                optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
-                for state in optimizer.state.values():
-                    for k, v in state.items():
-                        if torch.is_tensor(v):
-                            state[k] = v.cuda()
-            if 'scheduler_state_dict' in checkpoint.keys():
-                scheduler.load_state_dict(checkpoint['scheduler_state_dict'])
-                if use_ckpt_lr:
-                    try:
-                        lr = scheduler.get_lr()[0]
-                    except:
-                        # lr = lr
-                        pass
+        checkpoint = torch.load(pretrained_model)
+        if 'optimizer_state_dict' in checkpoint.keys():
+            optimizer.load_state_dict(checkpoint['optimizer_state_dict'])
+            for state in optimizer.state.values():
+                for k, v in state.items():
+                    if torch.is_tensor(v):
+                        state[k] = v.cuda()
+        if 'scheduler_state_dict' in checkpoint.keys():
+            scheduler.load_state_dict(checkpoint['scheduler_state_dict'])
+            if use_ckpt_lr:
+                try:
+                    lr = scheduler.get_lr()[0]
+                except:
+                    # lr = lr
+                    pass
 
     return optimizer, scheduler, lr
 

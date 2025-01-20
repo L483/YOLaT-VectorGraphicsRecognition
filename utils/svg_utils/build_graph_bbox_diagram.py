@@ -182,7 +182,7 @@ def merge_cc(node_dict, _, width, height):
     # hardcode 70 for expand_length
     # cc, bboxs = merge_cluster(cc, bboxs, ratio=None, expand_length=(70 / width, 70 / height))
     cc, bboxs = merge_cluster(cc, bboxs, ratio=None,
-                             expand_length=(40 / width, 40 / height))
+                              expand_length=(40 / width, 40 / height))
 
     paths = []
     shape_shape_edges = []
