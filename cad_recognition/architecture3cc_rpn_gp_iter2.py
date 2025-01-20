@@ -170,7 +170,8 @@ class SparseCADGCN(torch.nn.Module):
         # et = time.time()
         # print('obtain slice 0: ', et-st)
 
-        def build_data(data, slice_pos, slice_edge, slice_edge_super, slice_bbox):
+        # def build_data(data, slice_pos, slice_edge, slice_edge_super, slice_bbox):
+        def build_data(data, slice_pos, slice_edge, _, slice_bbox):
             # torch.cuda.synchronize()
             # st = time.time()
             o2n = {}
