@@ -17,7 +17,7 @@ from torch.nn import functional as F
 from config import OptInit
 from sklearn.metrics import confusion_matrix
 import torchvision
-
+from utils.det_util import bbox_iou
 
 from utils.ckpt_util import load_pretrained_models, load_pretrained_optimizer, save_checkpoint
 from utils.metrics import AverageMeter
@@ -110,7 +110,8 @@ def non_max_suppression(prediction, conf_thres=0.25, iou_thres=0.45, classes=Non
             i = i[:max_det]
         if merge and (1 < n < 3E3):  # Merge NMS (boxes merged using weighted mean)
             # update boxes as boxes(i,4) = weights(i,n) * boxes(n,4)
-            iou = box_iou(boxes[i], boxes) > iou_thres  # iou matrix
+            # iou = box_iou(boxes[i], boxes) > iou_thres  # iou matrix
+            iou = bbox_iou(boxes[i], boxes) > iou_thres  # iou matrix
             weights = iou * scores[None]  # box weights
             x[i, :4] = torch.mm(weights, x[:, :4]).float(
             ) / weights.sum(1, keepdim=True)  # merged boxes

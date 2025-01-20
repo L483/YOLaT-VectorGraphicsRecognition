@@ -190,8 +190,9 @@ class SESYDFloorPlan(torch.utils.data.Dataset):
             elif len(object_index) == 0:
                 # print(diff_0 * [width, height], diff_1* [width, height])
                 # print(object_index)
-                print('node', p[0] * width, p[1] *
-                      height, 'outside all object')
+                # print('node', p[0] * width, p[1] *
+                #       height, 'outside all object')
+                print('node', p[0], p[1], 'outside all object')
                 # for i, line in enumerate(bbox[:, 0:2] * [width, height]):
                 #    print(i, line)
                 raise SystemExit

@@ -57,6 +57,9 @@ if __name__ == "__main__":
 
     logging.info('===> Loading the network ...')
 
+    if opt.arch == 'centernet3cc_rpn_gp_iter2':
+        from architecture3cc_rpn_gp_iter2 import SparseCADGCN, DetectionLoss
+
     model = SparseCADGCN(opt).to(opt.device)
     # if opt.multi_gpus:
     #     model = DataParallel(SparseDeepGCN(opt)).to(opt.device)

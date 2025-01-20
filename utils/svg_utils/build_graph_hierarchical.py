@@ -168,7 +168,8 @@ def merge_cc(node_dict):
             # w = (w - 0.8) / 0.2
             # print(angle, w)
             if math.isnan(angle):
-                print(angle, pos_start, pos_end, dot_prod, cos_theta)
+                # print(angle, pos_start, pos_end, dot_prod, cos_theta)
+                print(angle, pos_start, pos_end)
                 raise SystemExit
 
             ret.append([0, 0, 0, 0, angle, euc_d2])
